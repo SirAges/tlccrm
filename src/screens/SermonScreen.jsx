@@ -44,7 +44,9 @@ const SermonScreen = ({ navigation }) => {
                         <>
                             <SearchFilter
                                 data={sermons}
-                               filterCond={"program"} searchTerm={searchTerm}
+                               filterCond={["title","program"]}
+                                 sortCond={["title","newest","popular"]}
+                               searchTerm={searchTerm}
                                 setSearchTerm={setSearchTerm}
                                 filter={filter}
                                 setFilter={setFilter}

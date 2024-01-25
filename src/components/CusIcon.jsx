@@ -1,36 +1,21 @@
-import {
-    TouchableOpacity,
-    View,
-    Text,
-    TouchableWithoutFeedback
-} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const CusIcon = ({
-    name,
-    outline,
-    bg,
-    m,
-    p,
-    color,
-    action,
-    focus,
-    disabled,
-    size,
-    hw
-}) => {
+import { View, Text } from "react-native";
+const CusIcon = ({ name, size, Textclass, m, p, bg, color, hw, action }) => {
     return (
-        <Text
-            style={{ marginRight: m }}
-            className={`${bg} ${
-                hw ? hw : "h-10 w-10"
-            } rounded-full ${color ? color : "primary"} ${
-                p ? p : "py-1.5 text-center"
-            }`}
-            onPress={disabled ? null : action}
-        >
-            <Ionicons name={outline ? outline : name} size={size ? size : 24} />
-        </Text>
+        <View className="items-center justify-center">
+            <Text
+                onPress={action}
+                style={{ marginRight: m }}
+                className={`${Textclass}   ${
+                    color ? color : "text-primary"
+                } ${bg} ${hw ? hw : "h-10 w-10"} rounded-full ${
+                    p ? p : "py-1.5"
+                } text-center`}
+            >
+                <Ionicons size={size ? size : 24} name={name} />
+            </Text>
+        </View>
     );
 };
 export default CusIcon;

@@ -17,3 +17,7 @@ export { default as CommentList} from "./CommentList";
 export { default as CardActions } from "./CardActions";
 export { default as Reactions } from "./Reactions";
 export { default as SearchFilter } from "./SearchFilter";
+export { default as DevotionFilter } from "./DevotionFilter"
+export { default as ChatFilter } from "./ChatFilter";
+export { default as VideoPlayer } from "./VideoPlayer";
+export { default as Separator } from "./Separator";

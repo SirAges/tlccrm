@@ -1,17 +1,35 @@
 import { View, Text, TextInput, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import { CusIcon } from "./";
-const SearchFilter = ({ data, setData, searchedData,searchTerm, setSearchTerm,filter, setFilter,filterCond }) => {
-    
-    
+const SearchFilter = ({
+    data,
+    setData,
+    searchedData,
+    searchTerm,
+    setSearchTerm,
+    filter,
+    setFilter,
+    filterCond,
+    sortCond,
+    handleDropdown
+}) => {
     const [sort, setSort] = useState("");
     const [noSearch, setNoSearch] = useState(true);
+    const [sortName, setSortName] = useState(true);
+
+    const handleSelectSort = clicked => {
+        handleDropdown ? handleDropdown() : null;
+        setSortName(clicked);
+        setSort(prev => (prev === "acd" ? "dcd" : "acd"));
+    };
 
     const handleSearch = () => {
         if (searchTerm) {
             if (filter) {
                 const searchArr = data.filter(s =>
-                    s[filter].toLowerCase().includes(searchTerm.toLowerCase())
+                    s[filter]
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase().trim())
                 );
                 if (searchArr.length) {
                     setData(searchArr);
@@ -20,7 +38,28 @@ const SearchFilter = ({ data, setData, searchedData,searchTerm, setSearchTerm,fi
                 }
             } else {
                 const searchArr = data.filter(s =>
-                    s.title.toLowerCase().includes(searchTerm.toLowerCase())
+                    s.title
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase().trim()) || s.chorus
+                        ? s.chorus
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase().trim())
+                        : false ||
+                          (s.program
+                              ? s.program
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase().trim())
+                              : false) ||
+                          (Array.isArray(s.body)
+                              ? s.body.some(b =>
+                                    (b.body
+                                        ? b.body.toLowerCase()
+                                        : b.verse.toLowerCase()
+                                    ).includes(searchTerm.toLowerCase().trim())
+                                )
+                              : s.body
+                                    .toLowerCase()
+                                    .includes(searchTerm.toLowerCase().trim()))
                 );
                 if (searchArr.length) {
                     setData(searchArr);
@@ -44,25 +83,45 @@ const SearchFilter = ({ data, setData, searchedData,searchTerm, setSearchTerm,fi
         let subscribe = true;
         const sortArr = () => {
             const sorted = [...searchedData].sort((a, b) => {
-              const dateA= new Date(a._createdAt)
-              const dateB= new Date(b._createdAt)
+                const dateA = new Date(a._createdAt);
+                const dateB = new Date(b._createdAt);
+                const currentDate = new Date();
+                const endDateA = new Date(a.end);
+                const endDateB = new Date(b.end);
+                const isExpiredA = currentDate > endDateA;
+                const isExpiredB = currentDate > endDateB;
                 if (sort) {
-                    if (sort === "AZ") return a.title.localeCompare(b.title);
-                    if (sort === "ZA") return b.title.localeCompare(a.title);
-                    if (sort === "newA") return dateA - dateB;
-                    if (sort === "newD") return dateB - dateA;
-                    if (sort === "popA")
+                    if (sortName === "title" && sort === "acd")
+                        return a.title.localeCompare(b.title);
+                    if (sortName === "title" && sort === "dcd")
+                        return b.title.localeCompare(a.title);
+                    if (sortName === "newest" && sort === "acd")
+                        return dateA - dateB;
+                    if (sortName === "newest" && sort === "dcd")
+                        return dateB - dateA;
+                    if (sortName === "index" && sort === "acd")
+                        return a.index - b.index;
+                    if (sortName === "index" && sort === "dcd")
+                        return b.index - a.index;
+                    if (sortName === "popular" && sort === "acd")
                         return (
                             a.comments.length +
                             a.reactions.length -
                             (b.comments.length + b.reactions.length)
                         );
-                    if (sort === "popD")
+                    if (sortName === "popular" && sort === "dcd")
                         return (
                             b.comments.length +
                             b.reactions.length -
                             (a.comments.length + a.reactions.length)
                         );
+                    if (sortName === "drange" && sort === "acd")
+                        return isExpiredA - isExpiredB;
+                    // || endDateA - endDateB;
+
+                    if (sortName === "drange" && sort === "dcd")
+                        return isExpiredB - isExpiredA;
+                    // || endDateB- endDateA
                 }
                 return 0; // Return 0 if no sorting is applied
             });
@@ -90,83 +149,60 @@ const SearchFilter = ({ data, setData, searchedData,searchTerm, setSearchTerm,fi
                     />
                 </View>
             </View>
-            <View>
-                <Text className="capitalize font-semibold">Search by:</Text>
-                <View className="flex-row justify-start space-x-2 items-center">
-                    <Text
-                        onPress={() =>
-                            setFilter(prev => (prev === "title" ? "" : "title"))
-                        }
-                        className={`capitalize ${
-                            filter === "title" ? "bg-primary text-white" : null
-                        } border border-primary  w-fit px-2 py-1 rounded-sm`}
-                    >
-                        title
-                    </Text>
-                    <Text
-                        onPress={() =>
-                            setFilter(prev =>
-                                prev === filterCond ? "" : filterCond
-                            )
-                        }
-                        className={`capitalize ${
-                            filter === filterCond
-                                ? "bg-primary text-white"
-                                : null
-                        } border border-primary  w-fit px-2 py-1 rounded-sm`}
-                    >
-                        {filterCond==="program"?filterCond:"Details"}
-                    </Text>
+            {filterCond.length ? (
+                <View>
+                    <Text className="capitalize font-semibold">Search by:</Text>
+                    <View className="flex-row justify-start space-x-2 items-center">
+                        {filterCond.map((f, i) => (
+                            <Text
+                                key={f + i}
+                                onPress={() =>
+                                    setFilter(prev => (prev === f ? "" : f))
+                                }
+                                className={`capitalize ${
+                                    filter === f
+                                        ? "bg-primary text-white"
+                                        : null
+                                } border border-primary  w-fit px-2 py-1 rounded-sm`}
+                            >
+                                {f === "body" ? "Details" : f}
+                            </Text>
+                        ))}
+                    </View>
                 </View>
-            </View>
-            <View>
-                <Text className="capitalize font-semibold">Sort by:</Text>
-                <View className="flex-row justify-start space-x-2 items-center">
-                    <Text
-                        onPress={() =>
-                            setSort(prev => (prev === "newA" ? "newD" : "newA"))
-                        }
-                        className={`capitalize ${
-                            sort === "newA"
-                                ? "bg-primary text-white"
-                                : sort === "newD"
-                                ? "bg-background text-black"
-                                : null
-                        } border border-primary  w-fit px-2 py-1 rounded-sm`}
-                    >
-                        newest
-                    </Text>
-                    <Text
-                        onPress={() =>
-                            setSort(prev => (prev === "AZ" ? "ZA" : "AZ"))
-                        }
-                        className={`capitalize ${
-                            sort === "AZ"
-                                ? "bg-primary text-white"
-                                : sort === "ZA"
-                                ? "bg-background text-black"
-                                : null
-                        } border border-primary  w-fit px-2 py-1 rounded-sm`}
-                    >
-                        A-Z
-                    </Text>
-                    <Text
-                        onPress={() =>
-                            setSort(prev => (prev === "popA" ? "popD" : "popA"))
-                        }
-                        className={`capitalize ${
-                            sort === "popA"
-                                ? "bg-primary text-white"
-                                : sort === "popD"
-                                ? "bg-background text-black"
-                                : null
-                        } border border-primary  w-fit px-2 py-1 rounded-sm`}
-                    >
-                        popular
-                    </Text>
+            ) : null}
+            {sortCond.length ? (
+                <View>
+                    <Text className="capitalize font-semibold">Sort by:</Text>
+                    <View className="flex-row justify-start space-x-2 items-center">
+                        {sortCond.map((s, i) => (
+                            <Text
+                                key={s + i}
+                                onPress={() => handleSelectSort(s)}
+                                className={`capitalize ${
+                                    sortName === s && sort === "acd"
+                                        ? "bg-primary text-white"
+                                        : sortName === s && sort === "dcd"
+                                        ? "bg-background text-black"
+                                        : null
+                                } border border-primary  w-fit px-2 py-1 rounded-sm`}
+                            >
+                                {s === "drange" ? "expiration" : s}
+                            </Text>
+                        ))}
+                    </View>
                 </View>
-            </View>
-            {noSearch && <Text>No result for {searchTerm}</Text>}
+            ) : null}
+            {noSearch && (
+                <Text className="mt-2 px-2 py-3 border border-danger text-danger text-md capitalize rounded-lg">
+                    No search result for
+                    <Text className="text-xl font-extrabold">
+                        {" "}
+                        {searchTerm}{" "}
+                    </Text>{" "}
+                    Please try again
+                </Text>
+            )}
         </View>
     );
 };

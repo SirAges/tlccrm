@@ -4,7 +4,7 @@ import SermonNavigator from "../navigators/SermonNavigator";
 import NewsNavigator from "../navigators/NewsNavigator";
 import ChatNavigator from "../navigators/ChatNavigator";
 import TestimonyNavigator from "../navigators/TestimonyNavigator";
-import DevotionalNavigator from "../navigators/DevotionalNavigator";
+
 import HymnNavigator from "../navigators/HymnNavigator";
 
 import { Text } from "react-native";
@@ -94,22 +94,22 @@ const TabNavigator = () => {
                 component={TestimonyNavigator}
             />
             <Tab.Screen
-                name="DevotionalNavigator"
+                name="ChatNavigator"
                 options={{
                    tabBarLabel: ({ focused }) => (
                        focused ? <Text className="capitalize text-icon font-medium">
-                              devotion
+                              chats
                         </Text>:null
                     ),
 
                     tabBarIcon: ({ focused }) => (
                         <CusIcon
-                            name={focused ? "leaf" : "leaf-outline"}
+                            name={focused ? "chatbox" : "chatbox-outline"}
                             size={24}
                         />
                     )
                 }}
-                component={DevotionalNavigator}
+                component={ChatNavigator}
             />
         </Tab.Navigator>
     );

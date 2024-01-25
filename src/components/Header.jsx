@@ -22,21 +22,22 @@ const Header = ({ navigation }) => {
                 <CusIcon
                     name="search"
                     bg="bg-gray-100"
-                    color="primary"
+                    color="text-primary"
                     m={10}
                     action={null}
                 />
                 <CusIcon
-                    outline="tv-outline"
+                  
                     bg="bg-gray-100"
-                    color="primary"
+                    color="text-primary"
                     m={5}
+                    name="tv-outline"
                     action={() => navigation.navigate("LiveScreen")}
                 />
                 <CusIcon
                     name="menu"
                     bg="bg-gray-100"
-                    color="primary"
+                    color="text-primary"
                     m={10}
                     action={() => navigation.toggleDrawer()}
                 />

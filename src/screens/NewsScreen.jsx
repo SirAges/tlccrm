@@ -49,11 +49,11 @@ const NewsScreen = ({ navigation }) => {
                         <>
                             <SearchFilter
                                 data={news}
-                             filterCond={"body"}   searchTerm={searchTerm}
+                             filterCond={["title","body"]}   searchTerm={searchTerm}
                                 setSearchTerm={setSearchTerm}
                                 filter={filter}
                                 setFilter={setFilter}
-                                searchedData={allNews}
+                              sortCond={["title","newest","popular"]}    searchedData={allNews}
                                 setData={setAllNews}
                             />
                             <News

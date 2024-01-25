@@ -50,8 +50,8 @@ const TestimonyScreen = ({ navigation }) => {
                             <SearchFilter
                                 data={testimonies}
                                 searchTerm={searchTerm}
-                                filterCond={"program"}
-                                setSearchTerm={setSearchTerm}
+                                filterCond={["title","program"]}
+                                sortCond={["title","newest","popular"]}  setSearchTerm={setSearchTerm}
                                 filter={filter}
                                 setFilter={setFilter}
                                 searchedData={allTestimonies}
