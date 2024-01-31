@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
     View,
     Text,
@@ -7,22 +7,36 @@ import {
     TouchableWithoutFeedback,
     FlatList
 } from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { processText, formatDateTime } from "../lib/utils";
-import { CusIcon, SearchFilter, Separator } from "../components";
+import { AddButton, CusIcon, SearchFilter, Separator } from "../components";
 import { announcements } from "../lib/data";
+import { announcementForm } from "../lib/forms";
+import { GlobalContext } from "../hooks/GlobalContext";
+const AnnouncementScreen = ({ navigation }) => {
+    const { setValue } = useContext(GlobalContext);
+    useEffect(() => {
+        setValue({
+            title: "",
+            image: "",
+            start: "",
+            end: "",
+            link: "",
+            body: ""
+        });
+    }, []);
 
-const AnnouncementScreen = () => {
     const isEspired = date => {
         const currentDate = new Date();
         const endDate = new Date(date);
         return currentDate > endDate;
     };
-    const [idx, setIdx] = useState(null);
     const [dropDown, setDropDown] = useState(false);
     const [allAnnouncements, setAllAnnouncements] = useState(announcements);
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState(null);
+
     const handleDropdown = clicked => {
         if (clicked === idx) {
             setDropDown(prev => !prev);
@@ -129,16 +143,14 @@ const AnnouncementScreen = () => {
                     )}
                 />
             </View>
-            <View className="absolute bottom-5 right-5 items-center justify-center">
-                <CusIcon
-                    name="add"
-                    bg="bg-primary"
-                    hw="w-14 h-14"
-                    p="py-2.5 px-2.5"
-                    size={35}
-                    color="text-white"
-                />
-            </View>
+            <AddButton
+                action={() =>
+                    navigation.navigate("FormScreen", {
+                        name: "announcement",
+                        formArray: announcementForm,multiple:false
+                    })
+                }
+            />
         </SafeAreaView>
     );
 };

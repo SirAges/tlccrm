@@ -5,7 +5,7 @@ import { Text } from "react-native";
 import { useFonts } from "expo-font";
 import { fonts } from "./src/lib/data";
 import * as SplashScreen from "expo-splash-screen";
-
+import { DataProvider } from "./src/hooks/GlobalContext";
 const App = () => {
     const [fontsLoaded, fontError] = useFonts(fonts);
 
@@ -21,9 +21,11 @@ const App = () => {
         return <Text>error Loading fonts...</Text>;
     } else {
         return (
-            <NavigationContainer onLayout={onLayoutRootView}>
-                <DrawerNavigator />
-            </NavigationContainer>
+            <DataProvider>
+                <NavigationContainer onLayout={onLayoutRootView}>
+                    <DrawerNavigator />
+                </NavigationContainer>
+            </DataProvider>
         );
     }
 };

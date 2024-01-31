@@ -586,7 +586,7 @@ export const drawerMenu = [
         title: "Ministries",
         name: "school",
         outline: "school-outline",
-        screen: "MinistryScreen"
+        screen: "MinistryNavigator"
     },
     {
         _id: "11",
@@ -1039,7 +1039,7 @@ export const hymns = [
         _id: "1",
         index: "1",
         title: "trust and obey",
-        audio:require("../../assets/audios/amazing2.mp3"),
+        audio: require("../../assets/audios/amazing2.mp3"),
         chorus: "Trust and obey, For there's no other way To be happy in Jesus, But to trust and obey.",
         body: [
             {
@@ -1115,3 +1115,4 @@ export const hymns = [
             "**Trust and Obey** is a Christian hymn written by John H. Sammis in 1887. The hymn's origins are associated with a sermon by evangelist D.L. Moody, where the emphasis was on trusting and obeying God. Inspired by this message, Sammis crafted the lyrics to capture the essence of the call for a deeper faith and a closer relationship with God.#### The lyrics reflect a personal commitment to walking with the Lord, finding joy in obedience, and trusting in His guidance. **Trust and Obey** has endured as a powerful expression of Christian devotion, emphasizing the timeless importance of faith and obedience in the Christian journey. The hymn remains a cherished part of worship traditions across various Christian denominations."
     }
 ];
+export const reactions=["heart","chatbox","send","mic"]

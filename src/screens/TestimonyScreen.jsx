@@ -1,5 +1,14 @@
-import { View, Text, FlatList, Image } from "react-native";
-import { useState, useEffect } from "react";
+import {
+    View,
+    Text,
+    FlatList,
+    Image,
+    TextInput,
+    Modal,
+    ScrollView,
+    Alert
+} from "react-native";
+import { useState, useEffect, useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { testimonies } from "../lib/data";
 import { textTruncate } from "../lib/utils";
@@ -7,12 +16,31 @@ import {
     SearchFilter,
     Reactions,
     CardActions,
-    Testimony
+    Testimony,
+    AddButton,
+    CusIcon,
+    Form
 } from "../components/";
+import { testimonyForm } from "../lib/forms";
+import { GlobalContext } from "../hooks/GlobalContext";
 const TestimonyScreen = ({ navigation }) => {
+    const { setValue } = useContext(GlobalContext);
+    useEffect(() => {
+        setValue({
+            title: "",
+            testifier: "",
+            image: "",
+            program: "",
+            date: "",
+            body: ""
+        });
+    }, []);
     const [allTestimonies, setAllTestimonies] = useState(testimonies);
     const [searchTerm, setSearchTerm] = useState("");
+    const [formModal, setFormModal] = useState(false);
     const [filter, setFilter] = useState(null);
+    const [inputErr, serInputErr] = useState(false);
+
     const popularTestimonies = [...testimonies]
         .sort(
             (a, b) =>
@@ -21,11 +49,15 @@ const TestimonyScreen = ({ navigation }) => {
                 (a.comments.length + a.reactions.length)
         )
         .slice(0, 10);
-
+    const handleInputChange = (text, id) => {
+        setValue(prev => ({ ...prev, [id]: text }));
+    };
+    const handleFormSubmit = () => {};
     const onProgramClicked = (clicked, fil) => {
         setFilter(fil);
         setSearchTerm(clicked);
     };
+
     useEffect(() => {
         if (filter && searchTerm) {
             const clickedArr = allTestimonies.filter(
@@ -50,8 +82,9 @@ const TestimonyScreen = ({ navigation }) => {
                             <SearchFilter
                                 data={testimonies}
                                 searchTerm={searchTerm}
-                                filterCond={["title","program"]}
-                                sortCond={["title","newest","popular"]}  setSearchTerm={setSearchTerm}
+                                filterCond={["title", "program"]}
+                                sortCond={["title", "newest", "popular"]}
+                                setSearchTerm={setSearchTerm}
                                 filter={filter}
                                 setFilter={setFilter}
                                 searchedData={allTestimonies}
@@ -116,6 +149,14 @@ const TestimonyScreen = ({ navigation }) => {
                     )}
                 />
             </View>
+            <AddButton
+                action={() =>
+                    navigation.navigate("FormScreen", {
+                        name: "testimony",
+                        formArray: testimonyForm
+                    })
+                }
+            />
         </SafeAreaView>
     );
 };

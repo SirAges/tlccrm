@@ -25,3 +25,4 @@ export { default as ChosenSchoolScreen } from "./ChosenSchoolScreen";
 export { default as DepartmentScreen } from "./DepartmentScreen";
 export { default as DoctrineScreen } from "./DoctrineScreen";
 export { default as SDoctrineScreen } from "./SDoctrineScreen";
+export { default as FormScreen } from "./FormScreen";

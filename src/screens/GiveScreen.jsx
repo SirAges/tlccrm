@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import {
     View,
     Text,
@@ -9,13 +9,25 @@ import {
 import * as Clipboard from "expo-clipboard";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { processText } from "../lib/utils";
-import { CusIcon } from "../components";
+import { CusIcon, AddButton } from "../components";
 import { bankAccounts } from "../lib/data";
-const GiveScreen = () => {
-    const [idx, setIdx] = useState(null);
+import { giveForm } from "../lib/forms";
+import { GlobalContext } from "../hooks/GlobalContext";
+const GiveScreen = ({ navigation }) => {
+    const { setValue } = useContext(GlobalContext);
+    useEffect(() => {
+        setValue({
+            name: "",
+            amount: "",
+            purpose: "",
+            body: ""
+        });
+    }, []);
     const [cdx, setCdx] = useState(null);
+    const [idx, setIdx] = useState(null);
     const [dropDown, setDropDown] = useState(false);
     const [copied, setCopied] = useState(false);
+
     const handleDropdown = clicked => {
         if (clicked === idx) {
             setDropDown(prev => !prev);
@@ -324,16 +336,16 @@ const GiveScreen = () => {
                     Jesus Is Lord
                 </Text>
             </ScrollView>
-            <View className="absolute bottom-24 right-5 items-center justify-center">
-                <CusIcon
-                    name="add"
-                    bg="bg-primary"
-                    hw="w-14 h-14"
-                    p="py-2.5 px-2.5"
-                    size={35}
-                    color="text-white"
-                />
-            </View>
+
+            <AddButton
+                action={() =>
+                    navigation.navigate("FormScreen", {
+                        name: "giving",
+                        formArray: giveForm,
+                        multiple: false
+                    })
+                }
+            />
         </SafeAreaView>
     );
 };

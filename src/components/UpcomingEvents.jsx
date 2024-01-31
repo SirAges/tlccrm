@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import { upcomingEvents } from "../lib/data";
 import { formatDateTime } from "../lib/utils";
 import { CountDown } from "./";
-const UpcomingEvents = () => {
+const UpcomingEvents = ({navigation}) => {
     return (
         <>
             {upcomingEvents.map(u => (
@@ -36,7 +36,7 @@ const UpcomingEvents = () => {
 
                     <Text className="text-white capitalize ">{u.venue}</Text>
 
-                    <CountDown date={u.date} />
+                    <CountDown navigation={navigation}date={u.date} />
                 </View>
             ))}
         </>

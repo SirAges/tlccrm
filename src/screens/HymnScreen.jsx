@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
     View,
     Text,
@@ -9,10 +9,29 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { processText, formatDateTime } from "../lib/utils";
-import { CusIcon, SearchFilter, Separator } from "../components";
+import { CusIcon, SearchFilter, AddButton, Separator } from "../components";
 import { hymns } from "../lib/data";
+import { hymnForm } from "../lib/forms";
+import { GlobalContext } from "../hooks/GlobalContext";
 
 const HymnScreen = ({ navigation }) => {
+    const { setValue,setObj } = useContext(GlobalContext);
+    useEffect(() => {
+        setValue({
+            title: "",
+            index: "",
+            audio: "",
+            body: [],
+            chorus: "",
+            history: "",
+            author: ""
+        });
+        setObj({
+            verse: "",
+            chorus: ""
+        });
+    }, []);
+
     const isEspired = date => {
         const currentDate = new Date();
         const endDate = new Date(date);
@@ -118,16 +137,15 @@ const HymnScreen = ({ navigation }) => {
                     )}
                 />
             </View>
-            <View className="absolute bottom-5 right-5 items-center justify-center">
-                <CusIcon
-                    name="add"
-                    bg="bg-primary"
-                    hw="w-14 h-14"
-                    p="py-2.5 px-2.5"
-                    size={35}
-                    color="text-white"
-                />
-            </View>
+            <AddButton
+                action={() =>
+                    navigation.navigate("FormScreen", {
+                        name: "hymn",
+                        formArray: hymnForm,
+                        multiple: false
+                    })
+                }
+            />
         </SafeAreaView>
     );
 };

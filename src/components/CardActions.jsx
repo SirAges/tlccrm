@@ -1,18 +1,23 @@
 import { useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Alert } from "react-native";
 import { CusIcon, Reactions } from "../components";
-import { reactions } from "../lib/data";
+import { reactions,currentUser } from "../lib/data";
 const CardActions = ({ navigation, feed }) => {
     const [modal, setModal] = useState(false);
     const openCommentScreen = () => {
         if (feed.text) {
             navigation.navigate("SSermonScreen", { feed });
         } else if (feed.testifier) {
-            navigation.navigate("STestimonyScreen", { feed })
+            navigation.navigate("STestimonyScreen", { feed });
         } else {
-            navigation.navigate("SNewsScreen", { feed })
+            navigation.navigate("SNewsScreen", { feed });
         }
     };
+
+    const handleAddReaction = reaction => {
+        Alert.alert(r,currentUser._id);
+    };
+
     return (
         <View>
             <View className="relative flex-row justify-between items-center">
@@ -20,7 +25,10 @@ const CardActions = ({ navigation, feed }) => {
                     <View className="absolute flex-row flex-wrap w-fit max-w-2xl bg-white shadow-lg shadow-black rounded-lg h-fit max-h-24 bottom-10 left-4 px-2 py-1 z-20">
                         {reactions.map(r => (
                             <View key={r.id}>
-                                <CusIcon name={r.reaction} />
+                                <CusIcon
+                                    action={() => handleAddReaction(r)}
+                                    name={r}
+                                />
                             </View>
                         ))}
                     </View>

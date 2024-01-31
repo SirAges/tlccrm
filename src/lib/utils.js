@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import React, { useState, useEffect } from "react";
+
 import { Audio } from "expo-av";
 // import { Audio } from "expo-av";
 // import * as Permissions from "expo-permissions";
@@ -36,10 +37,9 @@ export const formatDateTime = dateString => {
         day: "numeric",
         hour: "numeric",
         minute: "numeric",
-        second: "numeric",
         timeZone: "UTC"
     };
-    const formatter = new Intl.DateTimeFormat("en-US", options);
+    const formatter = new Intl.DateTimeFormat("en-NG", options);
     const formattedDate = formatter.format(new Date(dateString));
 
     return formattedDate;
@@ -357,3 +357,5 @@ export const AudioRecorder = () => {
         downloadAndSave
     };
 };
+
+

@@ -6,17 +6,34 @@ import {
     TextInput,
     TouchableWithoutFeedback
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { devotionals } from "../lib/data";
+import { devotionForm } from "../lib/forms";
 import { processText, getDay, getMonth } from "../lib/utils";
 import {
     SearchFilter,
     Reactions,
     DevotionFilter,
-    CusIcon
+    CusIcon,
+    AddButton
 } from "../components/";
+import { GlobalContext } from "../hooks/GlobalContext";
 const DevotionalScreen = ({ navigation }) => {
+    const { setValue } = useContext(GlobalContext);
+    useEffect(() => {
+        setValue({
+            title: "",
+            text: "",
+            body: "",
+            memoryVerse: {
+              text:"",
+              body:""
+            },
+            prayers: "",
+            
+        });
+    }, []);
     const [allDevotionals, setAllDevotionals] = useState(devotionals);
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState({
@@ -93,16 +110,15 @@ const DevotionalScreen = ({ navigation }) => {
                     </TouchableWithoutFeedback>
                 )}
             />
-             <View className="absolute bottom-24 right-5 items-center justify-center">
-                <CusIcon
-                    name="add"
-                    bg="bg-primary"
-                    hw="w-14 h-14"
-                    p="py-2.5 px-2.5"
-                    size={35}
-                    color="text-white"
-                />
-            </View>
+            <AddButton
+                action={() =>
+                    navigation.navigate("FormScreen", {
+                        name: "devotion",
+                        formArray: devotionForm,
+                        multiple: false
+                    })
+                }
+            />
         </SafeAreaView>
     );
 };

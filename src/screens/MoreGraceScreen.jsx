@@ -37,6 +37,7 @@ const MoreGraceScreen = () => {
                                 style={{ resizeMode: "cover" }}
                                 className="w-full h-full rounded-md"
                                 source={require("../../assets/images/ps1.jpg")}
+                                source={require("../../assets/images/ps1.jpg")}
                             />
                         </View>
                     </View>

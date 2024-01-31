@@ -1,14 +1,34 @@
 import { View, Text, FlatList, Image } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { news } from "../lib/data";
 import { textTruncate, formatDateAgo } from "../lib/utils";
-import { SearchFilter, Reactions, CardActions, News } from "../components/";
+import { newsForm } from "../lib/forms";
+import {
+    SearchFilter,
+    Reactions,
+    CardActions,
+    News,
+    AddButton,
+    Form
+} from "../components/";
+import { announcementForm } from "../lib/forms";
+import { GlobalContext } from "../hooks/GlobalContext";
 const NewsScreen = ({ navigation }) => {
+    const { setValue } = useContext(GlobalContext);
+    useEffect(() => {
+        setValue({
+            title: "",
+            image: "",
+            body: ""
+        });
+    }, []);
+
     const [allNews, setAllNews] = useState(news);
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState(null);
     const [clickedDate, setClickedDate] = useState(null);
+
     const popularNews = [...news]
         .sort(
             (a, b) =>
@@ -18,18 +38,15 @@ const NewsScreen = ({ navigation }) => {
         )
         .slice(0, 10);
 
-    const onDateClicked = (clicked)=> {
+    const onDateClicked = clicked => {
         setClickedDate(clicked);
-        
     };
     useEffect(() => {
-      
         if (clickedDate) {
             const clickedArr = allNews.filter(f => {
-            const  dateA= new Date(f._createdAt)
-            const  dateB= new Date(clickedDate)
-            return dateA>dateB
-              
+                const dateA = new Date(f._createdAt);
+                const dateB = new Date(clickedDate);
+                return dateA > dateB;
             });
             if (clickedArr.length) {
                 setAllNews(clickedArr);
@@ -49,11 +66,13 @@ const NewsScreen = ({ navigation }) => {
                         <>
                             <SearchFilter
                                 data={news}
-                             filterCond={["title","body"]}   searchTerm={searchTerm}
+                                filterCond={["title", "body"]}
+                                searchTerm={searchTerm}
                                 setSearchTerm={setSearchTerm}
                                 filter={filter}
                                 setFilter={setFilter}
-                              sortCond={["title","newest","popular"]}    searchedData={allNews}
+                                sortCond={["title", "newest", "popular"]}
+                                searchedData={allNews}
                                 setData={setAllNews}
                             />
                             <News
@@ -81,7 +100,6 @@ const NewsScreen = ({ navigation }) => {
                                     className="text-title text-md font-semibold capitalize"
                                 >
                                     {textTruncate(n.title, 35)}
-                                    
                                 </Text>
                                 <Text
                                     onPress={() =>
@@ -116,6 +134,15 @@ const NewsScreen = ({ navigation }) => {
                     )}
                 />
             </View>
+            <AddButton
+                action={() =>
+                    navigation.navigate("FormScreen", {
+                        name: "news",
+                        formArray: newsForm,
+                        multiple: false
+                    })
+                }
+            />
         </SafeAreaView>
     );
 };

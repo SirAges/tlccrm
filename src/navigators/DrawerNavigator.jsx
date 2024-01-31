@@ -3,7 +3,6 @@ import TabNavigator from "./TabNavigator";
 import MinistryNavigator from "./MinistryNavigator";
 import DevotionalNavigator from "./DevotionalNavigator";
 
-
 import HymnNavigator from "./HymnNavigator";
 import {
     AboutScreen,
@@ -20,11 +19,8 @@ import {
     DepartmentScreen,
     GiveScreen,
     NotificationScreen,
-    
-    DoctrineScreen,
-    
-    
-  
+    FormScreen,
+    DoctrineScreen
 } from "../screens";
 import { Dimensions } from "react-native";
 import { DrawerContent } from "../components";
@@ -43,7 +39,10 @@ const DrawerNavigator = () => {
             }}
         >
             <Drawer.Screen name="TabNavigator" component={TabNavigator} />
-            <Drawer.Screen name="DevotionalNavigator" component={DevotionalNavigator} />
+            <Drawer.Screen
+                name="DevotionalNavigator"
+                component={DevotionalNavigator}
+            />
             <Drawer.Screen name="AboutScreen" component={AboutScreen} />
             <Drawer.Screen name="BranchesScreen" component={BranchesScreen} />
             <Drawer.Screen name="LiveScreen" component={LiveScreen} />
@@ -63,17 +62,25 @@ const DrawerNavigator = () => {
                 name="MinistryNavigator"
                 component={MinistryNavigator}
             />
-            <Drawer.Screen name="DepartmentScreen" component={DepartmentScreen} />
+            <Drawer.Screen
+                name="DepartmentScreen"
+                component={DepartmentScreen}
+            />
             <Drawer.Screen name="HymnNavigator" component={HymnNavigator} />
-            
+
             <Drawer.Screen name="GiveScreen" component={GiveScreen} />
-            <Drawer.Screen name="NotificationScreen" component={NotificationScreen} />
+            <Drawer.Screen
+                name="NotificationScreen"
+                component={NotificationScreen}
+            />
             <Drawer.Screen name="DoctrineScreen" component={DoctrineScreen} />
-            <Drawer.Screen name="AnnouncementScreen" component={AnnouncementScreen} />
+            <Drawer.Screen
+                name="AnnouncementScreen"
+                component={AnnouncementScreen}
+            />
             <Drawer.Screen name="MoreGraceScreen" component={MoreGraceScreen} />
+            <Drawer.Screen name="FormScreen" component={FormScreen} />
         </Drawer.Navigator>
     );
 };
 export default DrawerNavigator;
-
-

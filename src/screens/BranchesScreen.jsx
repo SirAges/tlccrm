@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
     View,
     Text,
@@ -12,11 +12,27 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import MapView, { Marker } from "react-native-maps";
 import { processText, formatDate } from "../lib/utils";
-import { CusIcon, SearchFilter, Separator } from "../components";
+import { CusIcon, AddButton, SearchFilter, Separator } from "../components";
 import { branches } from "../lib/data";
-
-const BranchesScreen = () => {
-    const [idx, setIdx] = useState(null);
+import { branchForm } from "../lib/forms";
+import { GlobalContext } from "../hooks/GlobalContext";
+const BranchesScreen = ({ navigation }) => {
+    const { setValue } = useContext(GlobalContext);
+    useEffect(() => {
+        setValue({
+            title: "",
+            image: "",
+            pastor: "",
+            phone: "",
+            country: "",
+            state: "",
+            city: "",
+            address: "",
+            postalCode: "",
+            lng: "",
+            lat: ""
+        });
+    }, []);
     const [toggleModal, setToggleModal] = useState(false);
     const [dropDown, setDropDown] = useState(false);
     const [allBranches, setAllBranches] = useState(branches);
@@ -36,6 +52,8 @@ const BranchesScreen = () => {
             setDropDown(true);
         }
     };
+
+    const [idx, setIdx] = useState(null);
 
     const handleMap = b => {
         setMapDetails({
@@ -78,7 +96,6 @@ const BranchesScreen = () => {
         }
     }, [filter, searchTerm]);
     return (
-      
         <SafeAreaView className="bg-white flex-1">
             <Text className="uppercase text-2xl text-primary font-extrabold p-2  text-center">
                 Branches
@@ -224,17 +241,8 @@ const BranchesScreen = () => {
                     )}
                 />
             </View>
-            <View className="absolute bottom-24 right-5 items-center justify-center">
-                <CusIcon
-                    name="add"
-                    bg="bg-primary"
-                    hw="w-14 h-14"
-                    p="py-2.5 px-2.5"
-                    size={35}
-                    color="text-white"
-                />
-            </View>
- <Modal
+
+            <Modal
                 className="w-full h-full"
                 animationType="slide"
                 transparent={false}
@@ -273,10 +281,15 @@ const BranchesScreen = () => {
                     </View>
                 </View>
             </Modal>
-          
+            <AddButton
+                action={() =>
+                    navigation.navigate("FormScreen", {
+                        name: "branch",
+                        formArray: branchForm
+                    })
+                }
+            />
         </SafeAreaView>
-         
-        
     );
 };
 export default BranchesScreen;

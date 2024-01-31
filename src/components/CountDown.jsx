@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { View, Text } from "react-native";
+import { formatDateAgo } from "../lib/utils";
 
-const CountDown = ({ date }) => {
+const CountDown = ({ date, navigation }) => {
     const [counts, setCounts] = useState({});
     const countDowns = () => {
         const thirty = [4, 6, 9, 11];
@@ -57,8 +58,24 @@ const CountDown = ({ date }) => {
         };
     }, [date]);
 
+    const today = new Date();
+
+    const programDate = new Date(date);
+
+    const millidays = today - programDate;
+    const days = Math.round(millidays / (1000 * 60 * 60 * 24)) + 1;
+    const programDay =
+        counts.years === 0 &&
+        counts.months === 0 &&
+        counts.days === 0 &&
+        counts.hours === 0 &&
+        counts.minutes === 0 &&
+        counts.seconds === 0;
     return (
-        <View className="flex-row items-center space-x-2 rounded-md  bg-white shadow-black shadow-lg px-2 my-2 py-1 w-full">
+        <View
+            className="flex-row items-center space-x-2 rounded-md  bg-white
+        shadow-black shadow-lg px-2 my-2 py-2 w-full"
+        >
             {counts.years !== 0 && (
                 <View className=" items-center bg-primary/10 py-4 grow ">
                     <Text className=" capitalize">Year</Text>
@@ -105,6 +122,67 @@ const CountDown = ({ date }) => {
                     <Text className="capitalize ">second</Text>
                     <Text className=" text-xl font-extrabold">
                         {counts.seconds}
+                    </Text>
+                </View>
+            )}
+            {programDay && days === 1 && (
+                <View className=" items-center bg-primary/10 py-4 grow">
+                    <Text className="capitalize text-danger">
+                        happening live
+                    </Text>
+                    <Text className="capitalize text-lg font-medium ">
+                        welcome to the day one
+                    </Text>
+                    <Text
+                        className=" text-xl font-extrabold capitalize
+                        bg-primary text-white rounded-md shadow-lg shadow-black
+                        px-2 py-1"
+                        onPress={() => navigation.navigate("LiveScreen")}
+                    >
+                        Join live
+                    </Text>
+                </View>
+            )}
+
+            {programDay && days > 2 && (
+                <View
+                    className=" items-center bg-primary/10 py-4 grow
+                    space-y-2"
+                >
+                    <Text className="capitalize text-danger">
+                        program concluded
+                    </Text>
+                    <Text className="capitalize text-lg font-medium ">
+                        let us hear your testimony
+                    </Text>
+                    <Text
+                        className=" text-xl font-extrabold capitalize
+                        bg-primary text-white rounded-md shadow-lg shadow-black
+                        px-2 py-1"
+                        onPress={() => navigation.navigate("BranchesScreen")}
+                    >
+                        find a branch close to you
+                    </Text>
+                </View>
+            )}
+            {programDay && days === 2 && (
+                <View className=" items-center bg-primary/10 space-y-2 py-4 grow">
+                    <Text className="capitalize text-danger">
+                        happening live
+                    </Text>
+                    <Text
+                        className="capitalize text-lg font-medium bg-white
+                        rounded-md text-primary px-2 py-1 shadow-lg shadow-black "
+                    >
+                        the grand finale
+                    </Text>
+                    <Text
+                        className=" text-xl font-extrabold capitalize
+                        bg-primary text-white rounded-md shadow-lg shadow-black
+                        px-2 py-1"
+                        onPress={() => navigation.navigate("LiveScreen")}
+                    >
+                        Join Live
                     </Text>
                 </View>
             )}

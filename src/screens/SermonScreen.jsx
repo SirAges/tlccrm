@@ -1,13 +1,48 @@
-import { View, Text, FlatList, Image } from "react-native";
-import { useState, useEffect } from "react";
+import {
+    View,
+    Text,
+    FlatList,
+    Image,
+    KeyboardAvoidingView
+} from "react-native";
+import { useState, useEffect, useContext } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { sermons } from "../lib/data";
 import { textTruncate } from "../lib/utils";
-import { SearchFilter, Reactions, CardActions, Sermon } from "../components/";
+import { sermonExtra } from "../lib/forms";
+import {
+    SearchFilter,
+    Reactions,
+    CardActions,
+    Sermon,
+    AddButton,
+    Form
+} from "../components/";
+import { sermonForm } from "../lib/forms";
+import { GlobalContext } from "../hooks/GlobalContext";
 const SermonScreen = ({ navigation }) => {
+    const { setValue, setObj } = useContext(GlobalContext);
+    useEffect(() => {
+        setValue({
+            title: "",
+            image: "",
+            text: "",
+            body: [],
+            program: "",
+            introduction: ""
+        });
+        setObj({
+            point: "",
+            title: "",
+            text: "",
+            body: ""
+        });
+    }, []);
     const [allSermons, setAllSermons] = useState(sermons);
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState(null);
+
     const popularSermons = [...sermons]
         .sort(
             (a, b) =>
@@ -44,9 +79,9 @@ const SermonScreen = ({ navigation }) => {
                         <>
                             <SearchFilter
                                 data={sermons}
-                               filterCond={["title","program"]}
-                                 sortCond={["title","newest","popular"]}
-                               searchTerm={searchTerm}
+                                filterCond={["title", "program"]}
+                                sortCond={["title", "newest", "popular"]}
+                                searchTerm={searchTerm}
                                 setSearchTerm={setSearchTerm}
                                 filter={filter}
                                 setFilter={setFilter}
@@ -109,6 +144,14 @@ const SermonScreen = ({ navigation }) => {
                     )}
                 />
             </View>
+            <AddButton
+                action={() =>
+                    navigation.navigate("FormScreen", {
+                        name: "sermon",
+                        formArray: sermonForm
+                    })
+                }
+            />
         </SafeAreaView>
     );
 };

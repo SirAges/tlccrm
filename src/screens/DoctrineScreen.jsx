@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
     View,
     Text,
@@ -9,20 +9,31 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { processText, formatDateTime } from "../lib/utils";
-import { CusIcon, SearchFilter, Separator } from "../components";
+import { CusIcon, SearchFilter, AddButton, Separator } from "../components";
+import { doctrineForm } from "../lib/forms";
 import { doctrines } from "../lib/data";
-
-const DoctrineScreen = () => {
+import { GlobalContext } from "../hooks/GlobalContext";
+const DoctrineScreen = ({ navigation }) => {
+    const { setValue } = useContext(GlobalContext);
+    useEffect(() => {
+        setValue({
+            title: "",
+            text: "",
+            body: "",
+    
+        });
+    }, []);
     const isEspired = date => {
         const currentDate = new Date();
         const endDate = new Date(date);
         return currentDate > endDate;
     };
-    const [idx, setIdx] = useState(null);
     const [dropDown, setDropDown] = useState(false);
     const [allDoctrines, setAllDoctrines] = useState(doctrines);
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState(null);
+    const [idx, setIdx] = useState(null);
+
     const handleDropdown = clicked => {
         if (clicked === idx) {
             setDropDown(prev => !prev);
@@ -99,16 +110,16 @@ const DoctrineScreen = () => {
                     )}
                 />
             </View>
-            <View className="absolute bottom-5 right-5 items-center justify-center">
-                <CusIcon
-                    name="add"
-                    bg="bg-primary"
-                    hw="w-14 h-14"
-                    p="py-2.5 px-2.5"
-                    size={35}
-                    color="text-white"
-                />
-            </View>
+
+            <AddButton
+                action={() =>
+                    navigation.navigate("FormScreen", {
+                        name: "doctrine",
+                        formArray: doctrineForm,
+                        multiple: false
+                    })
+                }
+            />
         </SafeAreaView>
     );
 };

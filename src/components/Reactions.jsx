@@ -33,9 +33,14 @@ const Reactions = ({ feed }) => {
                             hw="h-6 w-6"
                             size={12}
                             name={r.name}
+                            m={16}
                         />
                     </View>
-                    <Text className="absolute rounded-full h-3 w-3  bg-primary -top-1 right-3 text-white text-[6px] p-[1px] font-bold text-center">
+                    <Text
+                        className="absolute rounded-full h-3 w-3  bg-primary
+                    -top-1 right-4 text-white text-[6px] p-[1px] font-bold
+                    text-center"
+                    >
                         {roundNumber(r.total)}
                     </Text>
                 </View>
