@@ -63,7 +63,7 @@ const CountDown = ({ date, navigation }) => {
     const programDate = new Date(date);
 
     const millidays = today - programDate;
-    const days = Math.round(millidays / (1000 * 60 * 60 * 24)) + 1;
+    const days = Math.floor(millidays / (1000 * 60 * 60 * 24)) + 1;
     const programDay =
         counts.years === 0 &&
         counts.months === 0 &&
@@ -73,64 +73,66 @@ const CountDown = ({ date, navigation }) => {
         counts.seconds === 0;
     return (
         <View
-            className="flex-row items-center space-x-2 rounded-md  bg-white
+            className="flex-row items-center space-x-2 rounded-md  bg-black/50
         shadow-black shadow-lg px-2 my-2 py-2 w-full"
         >
             {counts.years !== 0 && (
-                <View className=" items-center bg-primary/10 py-4 grow ">
-                    <Text className=" capitalize">Year</Text>
-                    <Text className=" text-xl font-extrabold">
+                <View className=" items-center justify-center grow ">
+                    <Text className=" capitalize text-white">Year</Text>
+                    <Text className=" text-white font-extrabold">
                         {counts.years}
                     </Text>
                 </View>
             )}
 
             {counts.months !== 0 && (
-                <View className=" items-center bg-primary/10 py-4 grow">
-                    <Text className=" capitalize">month</Text>
-                    <Text className=" text-xl font-extrabold">
+                <View className=" items-center justify-center grow ">
+                    <Text className=" capitalize text-white">month</Text>
+                    <Text className=" text-white font-extrabold">
                         {counts.months}
                     </Text>
                 </View>
             )}
             {counts.days !== 0 && (
-                <View className=" items-center bg-primary/10 py-4 grow">
-                    <Text className=" capitalize">day</Text>
-                    <Text className=" text-xl font-extrabold">
+                <View className=" items-center justify-center grow ">
+                    <Text className=" capitalize text-white">day</Text>
+                    <Text className=" text-white font-extrabold">
                         {counts.days}
                     </Text>
                 </View>
             )}
             {counts.hours !== 0 && (
-                <View className=" items-center bg-primary/10 py-4 grow">
-                    <Text className=" capitalize">hour</Text>
-                    <Text className=" text-xl font-extrabold">
+                <View className=" items-center justify-center grow ">
+                    <Text className=" capitalize text-white">hour</Text>
+                    <Text className=" text-white font-extrabold">
                         {counts.hours}
                     </Text>
                 </View>
             )}
             {counts.minutes !== 0 && (
-                <View className=" items-center bg-primary/10 py-4 grow">
-                    <Text className="capitalize ">minute</Text>
-                    <Text className=" text-xl font-extrabold">
+                <View className=" items-center justify-center grow ">
+                    <Text className=" capitalize text-white">minute</Text>
+                    <Text className=" text-white font-extrabold">
                         {counts.minutes}
                     </Text>
                 </View>
             )}
-            {counts.seconds !== 0 && (
-                <View className=" items-center bg-primary/10 py-4 grow">
-                    <Text className="capitalize ">second</Text>
-                    <Text className=" text-xl font-extrabold">
+
+            {counts.minutes !== 0 && (
+                <View className=" items-center justify-center grow ">
+                    <Text className=" capitalize text-white">second</Text>
+                    <Text className=" text-white font-extrabold">
                         {counts.seconds}
                     </Text>
                 </View>
             )}
+
             {programDay && days === 1 && (
                 <View className=" items-center bg-primary/10 py-4 grow">
-                    <Text className="capitalize text-danger">
+                    <Text className="capitalize text-white">
                         happening live
                     </Text>
-                    <Text className="capitalize text-lg font-medium ">
+                    <Text className="capitalize text-lg font-medium text-white">
                         welcome to the day one
                     </Text>
                     <Text
@@ -149,17 +151,17 @@ const CountDown = ({ date, navigation }) => {
                     className=" items-center bg-primary/10 py-4 grow
                     space-y-2"
                 >
-                    <Text className="capitalize text-danger">
+                    <Text className="capitalize text-white">
                         program concluded
                     </Text>
-                    <Text className="capitalize text-lg font-medium ">
+                    <Text className="capitalize font-medium text-white">
                         let us hear your testimony
                     </Text>
                     <Text
-                        className=" text-xl font-extrabold capitalize
+                        className="font-extrabold capitalize
                         bg-primary text-white rounded-md shadow-lg shadow-black
                         px-2 py-1"
-                        onPress={() => navigation.navigate("BranchesScreen")}
+                        onPress={() => navigation.navigate("BranchNavigator")}
                     >
                         find a branch close to you
                     </Text>
@@ -167,7 +169,7 @@ const CountDown = ({ date, navigation }) => {
             )}
             {programDay && days === 2 && (
                 <View className=" items-center bg-primary/10 space-y-2 py-4 grow">
-                    <Text className="capitalize text-danger">
+                    <Text className="capitalize text-white">
                         happening live
                     </Text>
                     <Text

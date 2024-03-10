@@ -11,13 +11,13 @@ const Sermon = ({ title, size, horizontal, sermons }) => {
                 keyExtractor={s => s._id}
                 horizontal={horizontal}
                 initialNumToRender={2}
-                data={data}
+                data={sermons}
                 renderItem={({ item: s }) => (
                     <View className="mx-1 my-1">
                         <View className={`image ${size} rounded-lg`}>
                             <Image
                                 style={{ resizeMode: "cover" }}
-                                source={s.image}
+                                source={{uri:s.image[0]}}
                                 className="w-full h-full rounded-lg"
                             />
                         </View>

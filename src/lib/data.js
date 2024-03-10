@@ -1,3 +1,41 @@
+export const currentUser = {
+    base: "user",
+    _id: "1",
+    isVerified: true,
+    dateJoined: "2024-01-12",
+    username: "phestplus",
+    department: ["intercessor", "sanitary"],
+    ministry: "youth",
+    image: require("../../assets/images/p.jpg"),
+    cImage: require("../../assets/images/ch1.jpg"),
+    geolocation: {
+        lat: "37.7749",
+        lng: "-122.4194"
+    },
+    onlinestatus: {
+        status: false,
+        timestamp: "2024-01-12T08:30:00Z"
+    },
+    personal: {
+        fullname: "Ekele Stephen",
+        email: "ekele@example.com",
+        phone: "123456789",
+        about: "Passionate about intercessory prayer and hygiene.",
+        country: "Country",
+        state: "State",
+        city: "City",
+        address: "123 Main Street",
+        postalCode: "12345",
+        resident: {
+            country: "Resident Country",
+            state: "Resident State",
+            city: "Resident City",
+            address: "Resident Street, 456",
+            postalCode: "67890"
+        }
+    }
+};
+
 export const users = [
     {
         base: "user",
@@ -80,7 +118,7 @@ export const users = [
         personal: {
             fullname: "Israel grace",
             email: "ekele@example.com",
-            phone: "070-556-91743",
+            phone: "07055691743",
             about: "Passionate about intercessory prayer and hygiene.",
             country: "Country",
             state: "State",
@@ -112,7 +150,7 @@ export const users = [
             lng: "-122.4194"
         },
         onlineStatus: {
-            status: false,
+            status: true,
             timestamp: "2024-01-12T08:30:00Z"
         },
         friends: ["1", "2"],
@@ -142,6 +180,7 @@ export const testimonies = [
     {
         base: "testimony",
         _id: "6",
+        _createdAt: "2001-06-15T12:00:00Z",
         title: "Healed of terible cancer that lasted 20 years",
         testifier: "Jane Doe",
         image: require("../../assets/images/ps1.jpg"),
@@ -237,7 +276,7 @@ export const news = [
     {
         base: "news",
         _id: "94",
-        _createdAt: "2024-01-15T12:00:00Z",
+        _createdAt: "2002-06-15T12:00:00Z",
         title: "Exciting News!",
         body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         image: require("../../assets/images/psmm1.png"),
@@ -283,7 +322,7 @@ export const news = [
     {
         base: "news",
         _id: "67",
-        _createdAt: "2019-01-15T12:00:00Z",
+        _createdAt: "2006-01-15T12:00:00Z",
         title: "Exciting News!",
         body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         image: require("../../assets/images/psmm1.png"),
@@ -329,7 +368,7 @@ export const news = [
     {
         base: "news",
         _id: "58",
-        _createdAt: "2018-01-15T12:00:00Z",
+        _createdAt: "2004-01-15T12:00:00Z",
         title: "Exciting News!",
         body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         image: require("../../assets/images/psmm1.png"),
@@ -378,7 +417,7 @@ export const sermons = [
     {
         base: "sermon",
         _id: "1",
-        _createdAt: "2021-01-16T14:30:00Z",
+        _createdAt: "2007-01-16T14:30:00Z",
         image: require("../../assets/images/ch3.jpg"),
         program: "tuesday Service",
         title: "Amend your ways",
@@ -418,7 +457,7 @@ export const sermons = [
     {
         base: "sermon",
         _id: "2",
-        _createdAt: "2024-01-16T14:30:00Z",
+        _createdAt: "2005-01-16T14:30:00Z",
         image: require("../../assets/images/ch3.jpg"),
         program: "Sunday Service",
         title: "where is my Love",
@@ -464,7 +503,7 @@ export const sermons = [
     {
         base: "sermon",
         _id: "3",
-        _createdAt: "2024-01-16T14:30:00Z",
+        _createdAt: "2003-08-16T14:30:00Z",
         image: require("../../assets/images/ch3.jpg"),
         program: "Sunday Service",
         title: "amend now is my Love",
@@ -535,43 +574,57 @@ export const drawerMenu = [
         title: "Anouncements",
         name: "megaphone",
         outline: "megaphone-outline",
-        screen: "AnnouncementScreen"
+        screen: "AnnouncementNavigator"
     },
     {
         _id: "3",
         title: "Branches",
         name: "location",
         outline: "location-outline",
-        screen: "BranchesScreen"
+        screen: "BranchNavigator"
     },
 
     {
-        _id: "5",
+        _id: "4",
         title: "Devotional Guide",
         name: "book",
         outline: "book-outline",
         screen: "DevotionalNavigator"
     },
     {
-        _id: "6",
+        _id: "12",
+        title: "Events",
+        name: "book",
+        outline: "book-outline",
+        screen: "EventNavigator"
+    },
+    {
+        _id: "5",
         title: "Chosen School",
         name: "school",
         outline: "school-outline",
         screen: "ChosenSchoolScreen"
     },
     {
+        _id: "6",
+        title: "More Grace",
+        name: "book",
+        outline: "book-outline",
+        screen: "MoreGraceScreen"
+    },
+    {
         _id: "7",
         title: "Give",
         name: "school",
         outline: "school-outline",
-        screen: "GiveScreen"
+        screen: "GiveNavigator"
     },
     {
         _id: "8",
         title: "What we believe",
         name: "book",
         outline: "book-outline",
-        screen: "DoctrineScreen"
+        screen: "DoctrineNavigator"
     },
 
     {
@@ -590,10 +643,10 @@ export const drawerMenu = [
     },
     {
         _id: "11",
-        title: "More Grace",
-        name: "book",
+        title: "Departments",
+        name: "Departments",
         outline: "book-outline",
-        screen: "MoreGraceScreen"
+        screen: "DepartmentNavigator"
     }
 ];
 
@@ -611,10 +664,8 @@ export const upcomingEvents = [
     {
         _id: "1",
         title: "FROM SORROW TO JOY 2024",
-        date: "2024-01-28T14:30:00Z",
-        time: "14:30:00",
-
         image: require("../../assets/images/ch3.jpg"),
+        date: "2024-03-8T6:30:00Z",
         venue: "Chosen Revival Ground 10 Odofin Park Estate, Along Oshodi-Apapa Express Way, Ijesha, Lagos, Nigeria"
     }
 ];
@@ -651,44 +702,6 @@ export const socialmedia = [
         icon: "videocam"
     }
 ];
-
-export const currentUser = {
-    base: "user",
-    _id: "1",
-    isVerified: true,
-    dateJoined: "2024-01-12",
-    username: "phestplus",
-    department: ["intercessor", "sanitary"],
-    ministry: "youth",
-    image: require("../../assets/images/p.jpg"),
-    cImage: require("../../assets/images/ch1.jpg"),
-    geolocation: {
-        lat: "37.7749",
-        lng: "-122.4194"
-    },
-    onlinestatus: {
-        status: false,
-        timestamp: "2024-01-12T08:30:00Z"
-    },
-    personal: {
-        fullname: "Ekele Stephen",
-        email: "ekele@example.com",
-        phone: "+123456789",
-        about: "Passionate about intercessory prayer and hygiene.",
-        country: "Country",
-        state: "State",
-        city: "City",
-        address: "123 Main Street",
-        postalCode: "12345",
-        resident: {
-            country: "Resident Country",
-            state: "Resident State",
-            city: "Resident City",
-            address: "Resident Street, 456",
-            postalCode: "67890"
-        }
-    }
-};
 
 export const usersChat = [
     {
@@ -1115,4 +1128,198 @@ export const hymns = [
             "**Trust and Obey** is a Christian hymn written by John H. Sammis in 1887. The hymn's origins are associated with a sermon by evangelist D.L. Moody, where the emphasis was on trusting and obeying God. Inspired by this message, Sammis crafted the lyrics to capture the essence of the call for a deeper faith and a closer relationship with God.#### The lyrics reflect a personal commitment to walking with the Lord, finding joy in obedience, and trusting in His guidance. **Trust and Obey** has endured as a powerful expression of Christian devotion, emphasizing the timeless importance of faith and obedience in the Christian journey. The hymn remains a cherished part of worship traditions across various Christian denominations."
     }
 ];
-export const reactions=["heart","chatbox","send","mic"]
+export const emojiReactions = [
+    "\u{1F602}", // 😂
+    "\u{2764}\u{FE0F}", // ❤️
+    "\u{1F44D}", // 👍
+    "\u{1F60D}", // 😍
+    "\u{1F60A}" // 😊
+];
+
+export const ministries = [
+    {
+        _id: "1",
+        announcements: [
+            {
+                _createdAt: "2023-06-16T14:34:00Z",
+                _id: "1",
+                title: "Important Announcement",
+                image: require("../../assets/images/ch1.jpg"),
+                start: "2023-06-16T14:34:00Z",
+                end: "2023-08-19T14:34:00Z",
+                body: "This is a crucial announcement.",
+                link: "https://example.com"
+            },
+            {
+                _createdAt: "2024-01-11T14:34:00Z",
+                _id: "2",
+                title: "Event Reminder",
+                image: require("../../assets/images/ch2.png"),
+                start: "2024-01-11T14:34:00Z",
+                end: "2024-02-17T14:34:00Z",
+                body: "Don't forget about our upcoming event.",
+                link: "https://events.example.com/event123"
+            }
+        ],
+        title: "youth Ministry",
+        members: ["1", "2", "3"],
+        body: "Description of the sample ministry. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        image: require("../../assets/images/ch3.jpg"),
+        feeds: [
+            {
+                _id: "1",
+                _createdAt: "2024-01-11T14:34:00Z",
+                title: "Latest Feed",
+                image: require("../../assets/images/ch1.jpg"),
+                body: "This is the latest feed update.",
+                timestamp: "2024-02-01T08:30:00.000Z",
+                comments: [
+                    {
+                        _id: "1",
+                        senderId: "1",
+                        message: "amen",
+                        reply: ""
+                    }
+                ],
+                reactions: [
+                    {
+                        senderId: "1",
+                        reaction: "heart"
+                    }
+                ]
+            },
+            {
+                _id: "2",
+                _createdAt: "2023-01-11T14:34:00Z",
+                title: "Community Spotlight",
+                image: require("../../assets/images/ch3.jpg"),
+                body: "Highlighting outstanding contributions from our community members.",
+                timestamp: "2024-01-30T15:45:00.000Z",
+                comments: [
+                    {
+                        _id: "1",
+                        senderId: "1",
+                        message: "amen",
+                        reply: ""
+                    }
+                ],
+                reactions: [
+                    {
+                        senderId: "1",
+                        reaction: "heart"
+                    }
+                ]
+            }
+        ],
+        cocs: [
+            {
+                _id: "1",
+                title: "Code of Conduct",
+                text: "matt 4:6",
+                body: "Our community follows a set of rules for respectful interactions."
+            },
+            {
+                _id: "2",
+                title: "Updated Code of Conduct",
+                text: "mark 2:2",
+                body: "We have revised our Code of Conduct to better reflect our community values."
+            }
+        ]
+    }
+];
+export const departments = [
+    {
+        _id: "1",
+        announcements: [
+            {
+                _id: "1",
+                title: "Important Announcement",
+                image: require("../../assets/images/ch1.jpg"),
+                start: "2024-02-01T12:00:00.000Z",
+                end: "2024-02-10T12:00:00.000Z",
+                body: "This is a crucial announcement.",
+                link: "https://example.com"
+            },
+            {
+                _id: "2",
+                title: "Event Reminder",
+                image: require("../../assets/images/ch2.png"),
+                start: "2024-02-15T18:00:00.000Z",
+                end: "2024-02-15T21:00:00.000Z",
+                body: "Don't forget about our upcoming event.",
+                link: "https://events.example.com/event123"
+            }
+        ],
+        title: "youth Ministry",
+        members: ["1", "2", "3"],
+        body: "Description of the sample ministry. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        image: require("../../assets/images/ch3.jpg"),
+        feeds: [
+            {
+                _id: "1",
+                _createdAt: "1",
+                title: "Latest Feed",
+                image: require("../../assets/images/ch1.jpg"),
+                body: "This is the latest feed update.",
+                timestamp: "2024-02-01T08:30:00.000Z",
+                comments: [
+                    {
+                        _id: "1",
+                        senderId: "1",
+                        message: "amen",
+                        reply: ""
+                    }
+                ],
+                reactions: [
+                    {
+                        senderId: "1",
+                        reaction: "heart"
+                    }
+                ]
+            },
+            {
+                _id: "2",
+                _createdAt: "2",
+                title: "Community Spotlight",
+                image: require("../../assets/images/ch3.jpg"),
+                body: "Highlighting outstanding contributions from our community members.",
+                timestamp: "2024-01-30T15:45:00.000Z",
+                comments: [
+                    {
+                        _id: "1",
+                        senderId: "1",
+                        message: "amen",
+                        reply: ""
+                    }
+                ],
+                reactions: [
+                    {
+                        senderId: "1",
+                        reaction: "heart"
+                    }
+                ]
+            }
+        ],
+        cocs: [
+            {
+                title: "Code of Conduct",
+                body: "Our community follows a set of rules for respectful interactions."
+            },
+            {
+                title: "Updated Code of Conduct",
+                body: "We have revised our Code of Conduct to better reflect our community values."
+            }
+        ]
+    }
+];
+
+export const markMyWords = [
+    {
+        title: "You shall rise again",
+        image: require("../../assets/images/p.jpg")
+    },
+    {
+        title: "You can not be deceived you are a chosen",
+        image: require("../../assets/images/ch1.jpg")
+    }
+];

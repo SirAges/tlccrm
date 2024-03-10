@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
     View,
     Text,
@@ -9,11 +9,13 @@ import {
     Modal
 } from "react-native";
 import { CusIcon } from "../components/";
-import { getUser, formatDateAgo, roundNumber } from "../lib/utils";
-import { currentUser } from "../lib/data";
+import { formatDateAgo, roundNumber } from "../lib/utils";
+import { GlobalContext } from "../hooks/GlobalContext";
 const ProfileScreen = ({ route, navigation }) => {
+    const { getUser, currentUser } = useContext(GlobalContext);
     const { userId } = route.params;
     const u = getUser(userId);
+    console.log("user", u);
 
     const [userData, setUserData] = useState({});
     const [keyToEdit, setKeyToEdit] = useState(null);
@@ -58,11 +60,12 @@ const ProfileScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
                 <View className="absolute right-3 bottom-3 flex-row items-center space-x-2 bg-background p-0.5 rounded-sm">
                     <Text className="text-sm font-semibold">Online</Text>
-                    {u.onlineStatus.status ? (
+                    {u?.onlineStatus?.status ? (
                         <Text className="h-2 w-2 bg-primary rounded-full"></Text>
                     ) : (
-                        <Text>{formatDateAgo(u.onlineStatus.timestamp)}</Text>
+                        <Text>time</Text>
                     )}
+                    
                 </View>
             </View>
             <></>

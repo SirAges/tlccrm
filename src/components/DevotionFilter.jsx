@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import { CusIcon } from "./";
-import { getYear, getMonth, getDay } from "../lib/utils";
+import { getYear, getMonth, getDays } from "../lib/utils";
 const DevotionFilter = ({
     data,
     setData,
@@ -17,7 +17,7 @@ const DevotionFilter = ({
     const [list, setList] = useState([]);
 
     const handleListDropdown = clicked => {
-        const uniqueYearsSet = new Set(data.map(d => getYear(d._createdAt)));
+        const uniqueYearsSet = new Set(data.map(d => getYear(d.createdAt)));
 
         const years = Array.from(uniqueYearsSet).sort(() => -1);
 
@@ -102,19 +102,19 @@ const DevotionFilter = ({
     }, [searchTerm]);
     useEffect(() => {
         const filterDevotion = () => {
-            const filtered = data.filter(f => {
-                const filterYear = getYear(f._createdAt);
-                const filterMonth = getMonth(f._createdAt);
-                const filterDay = Number(getDay(f._createdAt));
+            const yearDefault = filter.Year === "Select Year";
+            const monthDefault = filter.month === "Select Month";
+            const dayDefault = filter.day === "Select Day";
+            const filtered = data?.filter(f => {
+                const filterYear = getYear(f.createdAt);
+                const filterMonth = getMonth(f.createdAt);
+                const filterDay = getDays(f.createdAt);
 
-                const yearCondition =
-                     filterYear === filter.year;
+                const yearCondition = filterYear === filter.year;
                 const monthCondition = filterMonth === filter.month.slice(0, 3);
                 const dayCondition = filterDay === filter.day;
-                const yearDefault = filter.Year === "Select Year";
-                const monthDefault = filter.month === "Select Month";
-                const dayDefault = filter.day === "Select Day";
 
+                console.log("filter", filterYear, filter.year);
                 return (
                     (yearCondition && monthDefault && dayDefault) ||
                     (yearCondition && monthCondition && dayDefault) ||
@@ -122,11 +122,15 @@ const DevotionFilter = ({
                 );
             });
 
-            setData(filtered.length ? filtered : data);
+            setData(
+                filtered?.length
+                    ? filtered
+                    : data
+            );
         };
-
         filterDevotion();
     }, [filter]);
+
     const handleOutsideClick = () => {
         if (toggleList) {
             setToggleList(false);
@@ -141,7 +145,10 @@ const DevotionFilter = ({
                     onChangeText={text => setSearchTerm(text)}
                     placeholder="search here..."
                 />
-                <View className="items-center justify-center rounded-r-full bg-primary">
+                <View
+                    className="items-center justify-center rounded-r-full
+                bg-primary px-2"
+                >
                     <CusIcon
                         color="text-white"
                         name="search"

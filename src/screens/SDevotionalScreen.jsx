@@ -1,8 +1,8 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import {
     textTruncate,
-    getDay,
+    getDays,
     getMonth,
     getYear,
     getDayText,
@@ -21,16 +21,16 @@ const SDevotionalScreen = ({ route }) => {
                         <View className="flex-row">
                             <View className="items-center justify-center bg-primary rounded-tl-lg px-0.5">
                                 <Text className="uppercase font-extrabold text-xs text-white  tracking-[7px]">
-                                    {getDayText(d._createdAt)}
+                                    {getDayText(d.createdAt)}
                                 </Text>
                                 <Text className="uppercase font-extrabold text-xs text-white">
-                                    day {getDay(d._createdAt)}
+                                    day {getDays(d.createdAt)}
                                 </Text>
                                 <Text className="uppercase text-md tracking-[6px] leading-[15px] font-extrabold text-white">
-                                    {getMonth(d._createdAt)}
+                                    {getMonth(d.createdAt)}
                                 </Text>
                                 <Text className="uppercase font-extrabold text-xs text-white tracking-[4px]">
-                                    {getYear(d._createdAt)}
+                                    {getYear(d.createdAt)}
                                 </Text>
                             </View>
                             <View className="py-1 px-2 max-w-[300px]">
@@ -62,16 +62,34 @@ const SDevotionalScreen = ({ route }) => {
                                 {processText(d.body)}
                             </Text>
                         </View>
-                        <View className="px-2 pb-3 space-y-2">
-                            <Text className="font-semibold text-sm uppercase  ">
-                                Worship/praise God and then take the following
-                                prayer points:
-                            </Text>
+                        {d.prayer && (
+                            <View className="px-2 pb-3 space-y-2">
+                                <Text className="font-semibold text-sm uppercase  ">
+                                    Worship/praise God and then take the
+                                    following prayer points:
+                                </Text>
 
-                            <View className=" space-y-2">
-                                {processText(d.prayers)}
+                                <View className=" space-y-2">
+                                    {processText(d.prayers).map((p, i) => (
+                                        <View
+                                            className="flex-row items-center
+                                    space-x-2"
+                                        >
+                                            <Text
+                                                className="font-medium  w-5
+                   text-white text-lg bg-primary text-center"
+                                            >
+                                                {i + 1}
+                                            </Text>
+
+                                            <Text className="text-body flex-1">
+                                                {processText(p)}
+                                            </Text>
+                                        </View>
+                                    ))}
+                                </View>
                             </View>
-                        </View>
+                        )}
                     </View>
                 </ScrollView>
             </View>

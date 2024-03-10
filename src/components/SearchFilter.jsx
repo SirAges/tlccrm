@@ -14,7 +14,7 @@ const SearchFilter = ({
     handleDropdown
 }) => {
     const [sort, setSort] = useState("");
-    const [noSearch, setNoSearch] = useState(true);
+    const [noSearch, setNoSearch] = useState(false);
     const [sortName, setSortName] = useState(true);
 
     const handleSelectSort = clicked => {
@@ -32,6 +32,7 @@ const SearchFilter = ({
                         .includes(searchTerm.toLowerCase().trim())
                 );
                 if (searchArr.length) {
+                    setNoSearch(false);
                     setData(searchArr);
                 } else {
                     setNoSearch(true);
@@ -39,8 +40,10 @@ const SearchFilter = ({
             } else {
                 const searchArr = data.filter(s =>
                     s.title
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase().trim()) || s.chorus
+                        ? s.title
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase().trim())
+                        : false || s.chorus
                         ? s.chorus
                               .toLowerCase()
                               .includes(searchTerm.toLowerCase().trim())
@@ -82,9 +85,9 @@ const SearchFilter = ({
     useEffect(() => {
         let subscribe = true;
         const sortArr = () => {
-            const sorted = [...searchedData].sort((a, b) => {
-                const dateA = new Date(a._createdAt);
-                const dateB = new Date(b._createdAt);
+            const sorted = [...searchedData]?.sort((a, b) => {
+                const dateA = new Date(a?.createdAt);
+                const dateB = new Date(b?.createdAt);
                 const currentDate = new Date();
                 const endDateA = new Date(a.end);
                 const endDateB = new Date(b.end);
@@ -95,10 +98,14 @@ const SearchFilter = ({
                         return a.title.localeCompare(b.title);
                     if (sortName === "title" && sort === "dcd")
                         return b.title.localeCompare(a.title);
+                    if (sortName === "name" && sort === "acd")
+                        return a.name.localeCompare(b.name);
+                    if (sortName === "name" && sort === "dcd")
+                        return b.name.localeCompare(a.name);
                     if (sortName === "newest" && sort === "acd")
-                        return dateA - dateB;
-                    if (sortName === "newest" && sort === "dcd")
                         return dateB - dateA;
+                    if (sortName === "newest" && sort === "dcd")
+                        return dateA - dateB;
                     if (sortName === "index" && sort === "acd")
                         return a.index - b.index;
                     if (sortName === "index" && sort === "dcd")
@@ -134,21 +141,26 @@ const SearchFilter = ({
 
     return (
         <View className="bg-white mb-0.5 px-2 py-1">
-            <View className="flex-row">
-                <TextInput
-                    className="flex-1 bg-background rounded-l-full flex-1 items-center px-3 py-2"
-                    value={searchTerm}
-                    onChangeText={text => setSearchTerm(text)}
-                    placeholder="search here..."
-                />
-                <View className="items-center justify-center rounded-r-full bg-primary">
-                    <CusIcon
-                        color="text-white"
-                        name="search"
-                        action={() => handleSearch()}
+            {filterCond.length ? (
+                <View className="flex-row">
+                    <TextInput
+                        className="flex-1 bg-background rounded-l-full flex-1 items-center px-3 py-2"
+                        value={searchTerm}
+                        onChangeText={text => setSearchTerm(text)}
+                        placeholder="search here..."
                     />
+                    <View
+                        className="items-center justify-center rounded-r-full
+                bg-primary px-2"
+                    >
+                        <CusIcon
+                            color="text-white"
+                            name="search"
+                            action={() => handleSearch()}
+                        />
+                    </View>
                 </View>
-            </View>
+            ) : null}
             {filterCond.length ? (
                 <View>
                     <Text className="capitalize font-semibold">Search by:</Text>
@@ -196,10 +208,7 @@ const SearchFilter = ({
             {noSearch && (
                 <Text className="mt-2 px-2 py-3 border border-danger text-danger text-md capitalize rounded-lg">
                     No search result for
-                    <Text className="text-xl font-extrabold">
-                        {" "}
-                        {searchTerm}{" "}
-                    </Text>{" "}
+                    <Text className="text-xl font-extrabold">{searchTerm}</Text>
                     Please try again
                 </Text>
             )}

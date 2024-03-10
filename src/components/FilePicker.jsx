@@ -3,134 +3,121 @@ import mime from "mime";
 import { uploadFile } from "../lib/utils";
 import { View, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CusIcon } from "./";
-import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system";
+import { CusIcon, ImageViewer } from "./";
+import { pickDocument, deleteImageByUrl } from "../lib/utils";
+
 import axios from "axios";
 
-const FilePicker = ({ id, type, handleInputChange, multiple, name }) => {
-    const [file, setFile] = useState([]);
+const FilePicker = ({
+    id,
+    type,
+    handleInputChange,
+    multiple,
+    name,
+    value,
+    setValue,
+    setFile,
+    setImageIndex,
+    imageIndex,
+    setFormsImageViewModal
+}) => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(null);
-    const [idx, setIdx] = useState(null);
+    const [imageViewModal, setImageViewModal] = useState(false);
 
-    const pickDocument = async () => {
-        setLoading(true);
-        const cloudName = "daxrp4nar";
-        const apiKey = "868455186369275";
-        const uploadPreset = "tlccrm";
+    const handlePickDocument = async () => {
+        try {
+            const { assets } = await pickDocument(type, multiple);
+            await setFile(prev => [...prev, ...assets]);
+                        setFormsImageViewModal(true);
 
-        const result = await DocumentPicker.getDocumentAsync({
-            type: type,
-            multiple: multiple
-        });
-        if(result.assets.length!==0){
-        result.assets.forEach((r, i) => {
-            try {
-                setIdx(i);
-                if (result.canceled === false) {
-                    const { name, mimeType, uri } = r;
-
-                    const apiUrl = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
-
-                    const formData = new FormData();
-
-                    formData.append("file", {
-                        uri,
-                        type: mimeType,
-                        name
-                    });
-
-                    formData.append("upload_preset", uploadPreset);
-                    formData.append("api_key", apiKey);
-                    const options = {
-                        method: "post",
-                        body: formData,
-                        headers: {
-                            accept: "application/json"
-                        }
-                    };
-
-                    fetch(apiUrl, options)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.secure_url !== "") {
-                                handleInputChange(data.secure_url, id);
-                                setFile(prev => [...prev, data.secure_url]);
-
-                                setLoading(false);
-                            }
-                        })
-                        .catch(err => {
-                            setError(err.message);
-                            setLoading(false);
-                        });
-                } else {
-                    setLoading(false);
-                }
-            } catch (err) {
-                setLoading(false);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        });}else{
-        setLoading(false);}
+        } catch (err) {
+            console.log("error", err);
+        }
     };
-    const removeImage = index => {
-        const newFile = file.filter((f, i) => i !== index);
-        setFile(newFile);
+    const removeImage = async index => {
+        const newimages = value.image.filter((f, i) => i !== index);
+
+        setValue(prev => ({ ...prev, image: newimages }));
+    };
+    const handleImageIcon = async i => {
+        setImageIndex(i);
+        setImageViewModal(true);
     };
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View
-                className="flex-row  items-start space-x-2 px-2 py-1 align-text-top
+        <View
+            className=" flex-row  items-start space-x-2 px-2 py-1 align-text-top
                                 bg-background border border-primary/10
                                 rounded-lg"
-            >
-                <CusIcon
-                    name="images"
-                    action={() => (loading ? null : pickDocument())}
-                />
+        >
+            <CusIcon
+                name="images"
+                action={() =>
+                    loading ? null : handlePickDocument(type, multiple)
+                }
+            />
 
-                <View
-                    className={`flex-row flex-wrap ${
-                        loading ? "justify-center" : null
-                    } items-center  space-y-2 flex-1`}
-                >
-                    {loading ? (
-                        <Text className=" text-2xl text-primary font-bold">
-                            Loading Image...
-                        </Text>
-                    ) : file.length ? (
-                        file.map((f, i) => (
-                            <View className="mx-0.5 w-20 h-20 rounded-md bg-white items-center justify-center">
-                                <Image
-                                    style={{ resizeMode: "contain" }}
-                                    source={{ uri: f }}
-                                    className="w-full h-full rounded-md"
+            <View
+                className={`flex-row flex-wrap ${
+                    loading ? "justify-center" : null
+                } items-center  space-y-2 `}
+            >
+                {loading ? (
+                    <Text className=" text-2xl text-primary font-bold">
+                        Loading Image...
+                    </Text>
+                ) : value?.image?.length ? (
+                    value?.image?.map((f, i) => (
+                        <View
+                            key={i}
+                            className="mx-0.5 w-20 h-20 rounded-md bg-white items-center justify-center"
+                        >
+                            <Image
+                                style={{ resizeMode: "contain" }}
+                                source={{ uri: f }}
+                                className="w-full h-full rounded-md"
+                            />
+                            <View className="absolute bg-white  w-5 h-5 items-center justify-center rounded-md">
+                                <CusIcon
+                                    name="expand"
+                                    p="py-1.5"
+                                    m={0}
+                                    size={19}
+                                    action={() => handleImageIcon(i)}
                                 />
-                                <View className="absolute bg-white  w-5 h-5 items-center justify-center rounded-md">
-                                    <CusIcon
-                                        name="close"
-                                        m={0}
-                                        p="py-2.5"
-                                        size={19}
-                                        action={() => removeImage(i)}
-                                    />
-                                </View>
                             </View>
-                        ))
-                    ) : (
-                        <View className="justify-center h-full">
-                            <Text className="font-medium capitalize">
-                                no file selected
-                            </Text>
+                            <View
+                                className="absolute top-0
+                                     right-0 z-10 "
+                            >
+                                <CusIcon
+                                    bg="bg-white"
+                                    p={""}
+                                    hw="h-5 w-5"
+                                    size={10}
+                                    m={0}
+                                    color="text-danger"
+                                    name="close"
+                                    action={() => removeImage(i)}
+                                />
+                            </View>
                         </View>
-                    )}
-                </View>
+                    ))
+                ) : (
+                    <View className="justify-center py-2">
+                        <Text className="font-medium capitalize">
+                            no selected
+                        </Text>
+                    </View>
+                )}
             </View>
-        </SafeAreaView>
+            <ImageViewer
+                imageViewModal={imageViewModal}
+                setImageViewModal={setImageViewModal}
+                images={value.image}
+                imageIndex={imageIndex}
+            />
+        </View>
     );
 };
 export default FilePicker;

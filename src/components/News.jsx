@@ -1,26 +1,24 @@
 import { useState, useEffect } from "react";
-import { formatDate } from "../lib/utils";
+import { formatDateAgo } from "../lib/utils";
 import { View, Text, Image, TouchableOpacity, FlatList } from "react-native";
-// import { news } from "../lib/data";
-const News = ({ size, title, horizontal, navigation, news }) => {
-    const [data, setData] = useState(news);
 
+const News = ({ size, title, horizontal, navigation, news }) => {
+    
+if(!news)return<Text>no news</Text>
     return (
         <View className="px-2 py-1 mb-1 bg-white">
-            <Text className="capitalize font-medium text-title">
-              {title}
-            </Text>
+            <Text className="capitalize font-medium text-title">{title}</Text>
             <FlatList
                 keyExtractor={n => n._id}
                 horizontal={horizontal}
                 initialNumToRender={2}
-                data={data}
+                data={news}
                 renderItem={({ item: n }) => (
                     <View className="mx-1 my-1">
                         <View className={`image ${size} rounded-lg`}>
                             <Image
                                 style={{ resizeMode: "cover" }}
-                                source={n.image}
+                                source={{uri:n.image[0]}}
                                 className="w-full h-full rounded-lg"
                             />
                         </View>
@@ -33,7 +31,7 @@ const News = ({ size, title, horizontal, navigation, news }) => {
                                 className="text-white font-semibold text-[8px]
                             capitalize"
                             >
-                                {formatDate(n._createdAt)}
+                                {n.createdAt}
                             </Text>
                         </View>
                         <View

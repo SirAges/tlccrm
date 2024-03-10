@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import { drawerMenu, socialmedia, currentUser } from "../lib/data";
-
+import { useState, useEffect, useRef, useContext } from "react";
+import { drawerMenu, socialmedia } from "../lib/data";
+import { setLocalStorage } from "../lib/utils";
 import {
     DrawerContentScrollView,
     DrawerItemList,
@@ -8,7 +8,6 @@ import {
 } from "@react-navigation/drawer";
 import { CusIcon } from "./";
 import { useNavigation } from "@react-navigation/native";
-
 import {
     Text,
     View,
@@ -19,12 +18,27 @@ import {
     TouchableWithoutFeedback
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { GlobalContext } from "../hooks/GlobalContext";
+import { useLogoutMutation } from "../redux/auth/authApiSlice";
+import { useDispatch } from "react-redux";
+import { logOut } from "../redux/auth/authSlice";
 export const DrawerContent = ({ navigation, props }) => {
+    const dispatch = useDispatch();
     const handleClicked = screen => {
         navigation.navigate(screen);
     };
-    const u = currentUser;
+    const { currentUser: u, setPersist } = useContext(GlobalContext);
+    const [logout, { isLoading }] = useLogoutMutation();
+  
+    const handleLogout = async () => {
+        const { data } = await logout();
+
+        if (data) {
+        
+            dispatch(logOut());
+            setPersist(false);
+        }
+    };
     return (
         <SafeAreaView className="flex-1   bg-white">
             <View className="px-2 items-center bg-white py-2">
@@ -40,10 +54,11 @@ export const DrawerContent = ({ navigation, props }) => {
 
                         <Text className="font-extrabold text-2xl">Menu</Text>
                     </View>
-                    <CusIcon name="search" />
+                    <CusIcon action={() => handleLogout()} name="power" />
                 </View>
                 <TouchableWithoutFeedback
                     onPress={() =>
+                        u &&
                         navigation.navigate("ProfileScreen", {
                             userId: u._id
                         })
@@ -60,12 +75,12 @@ export const DrawerContent = ({ navigation, props }) => {
                             <Image
                                 style={{ resizeMode: "contain" }}
                                 className="w-full h-full rounded-full"
-                                source={u.image}
+                                source={u && u.image}
                             />
                         </View>
                         <View className="flex-1">
                             <Text className="capitalize font-black text-title">
-                                {u.username}
+                                {u && u.username}
                             </Text>
                             <Text className="text-body font-medium">
                                 View your profile
@@ -74,6 +89,7 @@ export const DrawerContent = ({ navigation, props }) => {
                     </View>
                 </TouchableWithoutFeedback>
             </View>
+
             <View className="flex-1 px-1">
                 <ScrollView>
                     <View className="menus flex-row items-start  flex-wrap pb-10">

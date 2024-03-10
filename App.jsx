@@ -1,33 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
+import { Text, View } from "react-native";
+import { Provider } from "react-redux";
+import { store } from "./src/app/store";
 import { NavigationContainer } from "@react-navigation/native";
-import DrawerNavigator from "./src/navigators/DrawerNavigator";
-import { Text } from "react-native";
+import Home from "./Home";
 import { useFonts } from "expo-font";
 import { fonts } from "./src/lib/data";
-import * as SplashScreen from "expo-splash-screen";
+// import * as SplashScreen from "expo-splash-screen";
+import SplashScreen from "./src/screens/SplashScreen";
 import { DataProvider } from "./src/hooks/GlobalContext";
+
+// SplashScreen.preventAutoHideAsync();
 const App = () => {
+    // SplashScreen.hideAsync();
     const [fontsLoaded, fontError] = useFonts(fonts);
+    useEffect(() => {
+        const loadFonts = async () => {
+    
 
-    const onLayoutRootView = async () => {
-        if (fontsLoaded) {
-            await SplashScreen.hideAsync();
-        }
-    };
+            if (!fontsLoaded && !fontError) {
+                return <SplashScreen />;
+            }
+        };
+        loadFonts();
+    }, [fontError, fontsLoaded]);
 
-    if (!fontsLoaded) {
-        return <Text>Loading fonts...</Text>;
-    } else if (fontError) {
-        return <Text>error Loading fonts...</Text>;
-    } else {
-        return (
+    return (
+        <Provider store={store}>
             <DataProvider>
-                <NavigationContainer onLayout={onLayoutRootView}>
-                    <DrawerNavigator />
+                <NavigationContainer>
+                    <Home />
                 </NavigationContainer>
             </DataProvider>
-        );
-    }
+        </Provider>
+    );
 };
 
 export default App;

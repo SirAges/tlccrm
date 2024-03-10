@@ -1,25 +1,23 @@
 import { useState, useEffect } from "react";
 import { View, Text, Image, TouchableOpacity, FlatList } from "react-native";
 // import { testimonies } from "../lib/data";
-const Testimony = ({ size,title, horizontal, testimonies }) => {
+const Testimony = ({ title, size, horizontal, testimonies }) => {
     const [data, setData] = useState(testimonies);
 
     return (
-        <View className=" px-2 py-1 mb-1 bg-white">
-            <Text className="capitalize font-medium text-title">
-              {title}
-            </Text>
+        <View className="px-2 py-1 mb-1 bg-white">
+            <Text className="capitalize font-medium text-title">{title}</Text>
             <FlatList
                 keyExtractor={t => t._id}
                 horizontal={horizontal}
                 initialNumToRender={2}
-                data={data}
+                data={testimonies}
                 renderItem={({ item: t }) => (
                     <View className="mx-1 my-1">
                         <View className={`image ${size} rounded-lg`}>
                             <Image
                                 style={{ resizeMode: "cover" }}
-                                source={t.image}
+                                source={{uri:t.image[0]}}
                                 className="w-full h-full rounded-lg"
                             />
                         </View>

@@ -6,12 +6,17 @@ import ChatNavigator from "../navigators/ChatNavigator";
 import TestimonyNavigator from "../navigators/TestimonyNavigator";
 
 import HymnNavigator from "../navigators/HymnNavigator";
+import { useEffect, useContext } from "react";
 
 import { Text } from "react-native";
 import { CusIcon } from "../components";
 import { Ionicons } from "@expo/vector-icons";
+
 const Tab = createBottomTabNavigator();
-const TabNavigator = () => {
+const TabNavigator = ({ navigation }) => {
+  
+
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -21,11 +26,12 @@ const TabNavigator = () => {
             <Tab.Screen
                 name="DashboardScreen"
                 options={{
-                    tabBarLabel: ({ focused }) => (
-                       focused ? <Text className="capitalize text-icon font-medium">
-                              home
-                        </Text>:null
-                    ),
+                    tabBarLabel: ({ focused }) =>
+                        focused ? (
+                            <Text className="capitalize text-icon font-medium">
+                                home
+                            </Text>
+                        ) : null,
 
                     tabBarIcon: ({ focused }) => (
                         <CusIcon
@@ -40,11 +46,12 @@ const TabNavigator = () => {
             <Tab.Screen
                 name="SermonNavigator"
                 options={{
-                   tabBarLabel: ({ focused }) => (
-                       focused ? <Text className="capitalize text-icon font-medium">
-                              sermon
-                        </Text>:null
-                    ),
+                    tabBarLabel: ({ focused }) =>
+                        focused ? (
+                            <Text className="capitalize text-icon font-medium">
+                                sermon
+                            </Text>
+                        ) : null,
 
                     tabBarIcon: ({ focused }) => (
                         <CusIcon
@@ -59,11 +66,12 @@ const TabNavigator = () => {
             <Tab.Screen
                 name="NewsNavigator"
                 options={{
-                   tabBarLabel: ({ focused }) => (
-                       focused ? <Text className="capitalize text-icon font-medium">
-                              news
-                        </Text>:null
-                    ),
+                    tabBarLabel: ({ focused }) =>
+                        focused ? (
+                            <Text className="capitalize text-icon font-medium">
+                                news
+                            </Text>
+                        ) : null,
 
                     tabBarIcon: ({ focused }) => (
                         <CusIcon
@@ -78,11 +86,12 @@ const TabNavigator = () => {
             <Tab.Screen
                 name="TestimonyNavigator"
                 options={{
-                    tabBarLabel: ({ focused }) => (
-                       focused ? <Text className="capitalize text-icon font-medium">
-                              testimony
-                        </Text>:null
-                    ),
+                    tabBarLabel: ({ focused }) =>
+                        focused ? (
+                            <Text className="capitalize text-icon font-medium">
+                                testimony
+                            </Text>
+                        ) : null,
 
                     tabBarIcon: ({ focused }) => (
                         <CusIcon
@@ -96,11 +105,12 @@ const TabNavigator = () => {
             <Tab.Screen
                 name="ChatNavigator"
                 options={{
-                   tabBarLabel: ({ focused }) => (
-                       focused ? <Text className="capitalize text-icon font-medium">
-                              chats
-                        </Text>:null
-                    ),
+                    tabBarLabel: ({ focused }) =>
+                        focused ? (
+                            <Text className="capitalize text-icon font-medium">
+                                chats
+                            </Text>
+                        ) : null,
 
                     tabBarIcon: ({ focused }) => (
                         <CusIcon

@@ -1,21 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
     Image,
     View,
     Text,
-    FlatList,
+    FlatList,TouchableOpacity,
     TouchableWithoutFeedback
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { users, usersChat, currentUser } from "../lib/data";
-
-import { checkUserInContact, getTime, processText } from "../lib/utils";
-import { ChatFilter } from "../components";
+import { users } from "../lib/data";
+import { usersChat } from "../lib/userschat";
+import { GlobalContext } from "../hooks/GlobalContext";
+import {
+    checkUserInContact,
+    getTime,
+    processText,
+    getUser
+} from "../lib/utils";
+import { ChatFilter, Separator } from "../components";
 import * as Contacts from "expo-contacts";
 
 const ChatScreen = ({ navigation }) => {
+    const online = true;
+    const { currentUser,getReceiver } = useContext(GlobalContext);
     const [contacts, setContacts] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
+    const [chatUsers, setChatUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState(null);
 
@@ -26,6 +35,15 @@ const ChatScreen = ({ navigation }) => {
         const phoneUsers = checkUserInContact(contacts, users);
         setAllUsers(phoneUsers);
     }, [contacts, users]);
+
+    useEffect(() => {
+        const myChats = usersChat.filter(c => {
+            const ids = c.chatId.split("-");
+            return ids.includes(currentUser._id);
+        });
+
+        setChatUsers(myChats);
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -46,28 +64,12 @@ const ChatScreen = ({ navigation }) => {
         })();
     }, []);
 
-    const handleLastMessage = (hisId, field) => {
-        const myId = currentUser._id;
-
-        const chatId =
-            Number(myId) < Number(hisId)
-                ? myId + "-" + hisId
-                : hisId + "-" + myId;
-        const existChat = usersChat.find(c => c.chatId === chatId);
-
-        const lastMessageTime =
-            existChat?.messages[existChat.messages.length - 1][field];
-        if (field === "_createdAt") {
-            const lastSeen = users.find(s => s._id === hisId);
-            const time = lastSeen.onlineStatus.timestamp;
-
-            return getTime(time);
-        } else if (field == "message") {
-            return processText(lastMessageTime, 20);
-        } else {
-            return existChat.messages.filter(s => s.seen === false).length;
-        }
+    const unSeen = messages => {
+        const count = messages.filter(u => !u.seen).length;
+        if (!count) return null;
+        return count;
     };
+    
 
     return (
         <SafeAreaView className=" flex-1  bg-white ">
@@ -75,57 +77,63 @@ const ChatScreen = ({ navigation }) => {
                 <View className=""></View>
                 <FlatList
                     keyExtractor={u => u._id}
-                    data={allUsers}
-                    renderItem={({ item: u }) => (
-                        <>
-                            <TouchableWithoutFeedback
-                                onPress={() =>
-                                    navigation.navigate("SChatScreen", {
-                                        hisId: u._id
-                                    })
-                                }
-                            >
-                                <View className="flex-row items-center justify-between space-x-2 shadow-lg shadow-black/10 bg-white m-2 px-2  py-2 rounded-md">
-                                    <View className="rounded-full border border-primary p-0.5 w-10  h-10 ">
+                    data={chatUsers}
+                    renderItem={({ item: c }) => (
+                        <TouchableOpacity
+                            onPress={() =>
+                                navigation.navigate("SChatScreen", { chat: c })
+                            }
+                        >
+                            <>
+                                <View
+                                    className="flex-row space-x-2  
+                          px-2 py-2
+                    items-center justify-between"
+                                >
+                                    <View
+                                        className="w-12 h-12 rounded-full p-0.5 border
+                    boreder-primary"
+                                    >
                                         <Image
-                                            className="rounded-full w-full h-full "
                                             style={{ resizeMode: "cover" }}
-                                            source={u.image}
+                                            className="w-full h-full rounded-full"
+                                            source={getReceiver(c.chatId).image}
+                                        />
+
+                                        <Text
+                                            className={`absolute ${
+                                                getReceiver(c.chatId)
+                                                    .onlineStatus.status
+                                                    ? "bg-primary"
+                                                    : "bg-body"
+                                            } rounded-full
+                                        h-3 w-3 border border-white/40 `}
                                         />
                                     </View>
                                     <View className="flex-1 space-y-1">
-                                        <Text className="font-semibold text-md capitalize text-primary ">
-                                            @{u.username}
+                                        <Text
+                                            className="text-white font-semibold
+                                capitalize"
+                                        >
+                                            @{getReceiver(c.chatId).username}
                                         </Text>
-                                        <Text className="text-body ">
-                                            {handleLastMessage(
-                                                u._id,
-                                                "message"
-                                            )}
+                                        <Text className="text-body">
+                                            {c.messages[0].message}
                                         </Text>
                                     </View>
-                                    <View className="items-end justify-between">
-                                        {!u.onlineStatus.status && (
-                                            <Text className="capitalize font-semibold text-primary text-xs">
-                                                Last Seen:{" "}
-                                                {handleLastMessage(
-                                                    u._id,
-                                                    "_createdAt"
-                                                )}
-                                            </Text>
-                                        )}
-                                        <View className="rounded-full items-center justify-center text-center bg-primary  w-6 h-6">
-                                            <Text className="text-white">
-                                                {handleLastMessage(
-                                                    u._id,
-                                                    "newmsg"
-                                                )}
+                                    {unSeen(c.messages) && (
+                                        <View
+                                            className="justify-center items-center
+                            bg-white rounded-full h-7 w-7"
+                                        >
+                                            <Text className="font-medium text-primary">
+                                                {unSeen(c.messages)}
                                             </Text>
                                         </View>
-                                    </View>
+                                    )}
                                 </View>
-                            </TouchableWithoutFeedback>
-                        </>
+                            </>
+                        </TouchableOpacity>
                     )}
                 />
             </View>

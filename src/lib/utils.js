@@ -1,20 +1,21 @@
-import { formatDistanceToNow } from "date-fns";
-import React, { useState, useEffect } from "react";
-
+import { formatDistanceToNow, format, getDay } from "date-fns";
+import { useGetUserQuery } from "../redux/user/userApiSlice";
+import React, { useState, useEffect, useContext } from "react";
 import { Audio } from "expo-av";
-// import { Audio } from "expo-av";
-// import * as Permissions from "expo-permissions";
-// import * as FileSystem from "expo-file-system";
+import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { users } from "./data";
 import { Text } from "react-native";
-export const formatDateAgo = raw => {
-    // Example usage:
-    const timestamp = new Date(raw);
 
-    const timeAgo = formatDistanceToNow(timestamp, { addSuffix: true });
+export const formatDateAgo = raw => {
+    const timestamp = new Date(raw);
+    const timeAgo = formatDistanceToNow(timestamp, {
+      
+        addSuffix: true
+    });
     return timeAgo;
 };
-
 export const formatDate = dateString => {
     const options = {
         year: "numeric",
@@ -30,67 +31,37 @@ export const formatDate = dateString => {
 
     return formattedDate;
 };
+
 export const formatDateTime = dateString => {
-    const options = {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
+    if (!dateString) {
+        return "Invalid date";
+    }
+
+    const formattedDate = format(new Date(dateString), "yyyy MMMM dd, HH:mm", {
         timeZone: "UTC"
-    };
-    const formatter = new Intl.DateTimeFormat("en-NG", options);
-    const formattedDate = formatter.format(new Date(dateString));
+    });
 
     return formattedDate;
 };
-export const getDay = dateString => {
-    const options = {
-        day: "numeric"
-    };
-    const formatter = new Intl.DateTimeFormat("en-US", options);
-    const formattedDate = formatter.format(new Date(dateString));
-
-    return formattedDate;
+export const getDays = dateString => {
+    return getDay(new Date(dateString));
 };
+
 export const getDayText = dateString => {
-    const options = { weekday: "short" };
-    const formatter = new Intl.DateTimeFormat("en-US", options);
-    const formattedDate = formatter.format(new Date(dateString));
-
-    return formattedDate;
+    return format(new Date(dateString), "EEE");
 };
+
 export const getMonth = dateString => {
-    const options = {
-        month: "short"
-    };
-    const formatter = new Intl.DateTimeFormat("en-US", options);
-    const formattedDate = formatter.format(new Date(dateString));
-
-    return formattedDate;
+    return format(new Date(dateString), "MMM");
 };
+
 export const getYear = dateString => {
-    const options = {
-        year: "numeric"
-    };
-    const formatter = new Intl.DateTimeFormat("en-US", options);
-    const formattedDate = formatter.format(new Date(dateString));
-
-    return formattedDate;
+    return format(new Date(dateString), "yyyy");
 };
+
 export const getTime = dateString => {
-    const options = {
-        hour: "numeric",
-        minute: "numeric",
-        // second: "numeric",
-        timeZone: "UTC"
-    };
-    const formatter = new Intl.DateTimeFormat("en-US", options);
-    const formattedDate = formatter.format(new Date(dateString));
-
-    return formattedDate;
+    return format(new Date(dateString), "HH:mm", { timeZone: "UTC" });
 };
-
 export const textTruncate = (text, len) => {
     if (text.length >= len) {
         const newText = text.slice(0, len) + "...";
@@ -106,8 +77,14 @@ export const roundNumber = num => {
     if (number >= 100 && number < 1000) {
         const newNumber = String(number).charAt(0) + "H";
         return newNumber;
-    } else if (number >= 1000 && number < 1000000) {
+    } else if (number >= 1000 && number < 10000) {
         const newNumber = String(number).charAt(0) + "K";
+        return newNumber;
+    } else if (number >= 10000 && number < 100000) {
+        const newNumber = String(number).slice(0, 1) + "k";
+        return newNumber;
+    } else if (number >= 100000 && number < 1000000) {
+        const newNumber = String(number).slice(0, 2) + "K";
         return newNumber;
     } else if (number >= 1000000 && number < 1000000000) {
         const newNumber = String(number).charAt(0) + "M";
@@ -120,89 +97,85 @@ export const roundNumber = num => {
     }
 };
 
-export const getUser = id => {
-    const foundUser = users.find(u => u._id === id);
-    return foundUser;
-};
-
 export const processText = (value, len) => {
     const boldItalicRegex = /\*\*\*(.*?)\*\*\*/g;
     const boldRegex = /\*\*([^*]+)\*\*/g;
     const italicRegex = /\*([^*]+)\*/g;
     const newLineRegex = /##/g;
     const listRegex = /#(\d+)/g;
+    if (value) {
+        const textFormat = innerString => {
+            const newText =
+                innerString.length > len
+                    ? innerString.slice(0, len) + "..."
+                    : innerString;
+            const text = newText.replace(newLineRegex, "\n");
+            formattedText = text
+                .split(boldItalicRegex)
+                .map((chunk, index) => {
+                    if (index % 2 === 0) {
+                        return chunk
+                            .split(boldRegex)
+                            .map((innerChunk, innerIndex) => {
+                                return innerIndex % 2 === 0 ? (
+                                    innerChunk
+                                        .split(italicRegex)
+                                        .map((subInnerChunk, subInnerIndex) => {
+                                            return subInnerIndex % 2 === 0 ? (
+                                                <Text
+                                                    key={`${index}-${innerIndex}-${subInnerIndex}`}
+                                                >
+                                                    {subInnerChunk}
+                                                </Text>
+                                            ) : (
+                                                <Text
+                                                    key={`${index}-${innerIndex}-${subInnerIndex}`}
+                                                    style={{
+                                                        fontStyle: "italic"
+                                                    }}
+                                                >
+                                                    {subInnerChunk}
+                                                </Text>
+                                            );
+                                        })
+                                ) : (
+                                    <Text
+                                        key={`${index}-${innerIndex}`}
+                                        style={{ fontWeight: "bold" }}
+                                    >
+                                        {innerChunk}
+                                    </Text>
+                                );
+                            });
+                    } else {
+                        return (
+                            <Text
+                                key={index}
+                                style={{
+                                    fontStyle: "italic",
+                                    fontWeight: "bold"
+                                }}
+                            >
+                                {chunk}
+                            </Text>
+                        );
+                    }
+                })
+                .flat();
 
-    const textFormat = innerString => {
-        const newText =
-            innerString.length > len
-                ? innerString.slice(0, len) + "..."
-                : innerString;
-        const text = newText.replace(newLineRegex, "\n");
-        formattedText = text
-            .split(boldItalicRegex)
-            .map((chunk, index) => {
-                if (index % 2 === 0) {
-                    return chunk
-                        .split(boldRegex)
-                        .map((innerChunk, innerIndex) => {
-                            return innerIndex % 2 === 0 ? (
-                                innerChunk
-                                    .split(italicRegex)
-                                    .map((subInnerChunk, subInnerIndex) => {
-                                        return subInnerIndex % 2 === 0 ? (
-                                            <Text
-                                                key={`${index}-${innerIndex}-${subInnerIndex}`}
-                                            >
-                                                {subInnerChunk}
-                                            </Text>
-                                        ) : (
-                                            <Text
-                                                key={`${index}-${innerIndex}-${subInnerIndex}`}
-                                                style={{
-                                                    fontStyle: "italic"
-                                                }}
-                                            >
-                                                {subInnerChunk}
-                                            </Text>
-                                        );
-                                    })
-                            ) : (
-                                <Text
-                                    key={`${index}-${innerIndex}`}
-                                    style={{ fontWeight: "bold" }}
-                                >
-                                    {innerChunk}
-                                </Text>
-                            );
-                        });
-                } else {
-                    return (
-                        <Text
-                            key={index}
-                            style={{
-                                fontStyle: "italic",
-                                fontWeight: "bold"
-                            }}
-                        >
-                            {chunk}
-                        </Text>
-                    );
-                }
-            })
-            .flat();
+            return formattedText;
+        };
 
-        return formattedText;
-    };
+        if (listRegex.test(value)) {
+            const listArray = value.split(listRegex);
+            const newList = listArray.filter(f => f.length > 3);
 
-    if (listRegex.test(value)) {
-        const listArray = value.split(listRegex);
-        const newList = listArray.filter(f => f.length > 3);
-        console.log(textFormat(value));
-        return newList.map(l => (
-            <Text className="text-body">{textFormat(l)}</Text>
-        ));
+            return newList;
+        } else {
+            return <>{textFormat(value)}</>;
+        }
     } else {
-        return <>{textFormat(value)}</>;
+        return null;
     }
 };
 
@@ -358,4 +331,115 @@ export const AudioRecorder = () => {
     };
 };
 
+export const pickDocument = async (type, multiple) => {
+    const result = await DocumentPicker.getDocumentAsync({
+        type,
+        multiple
+    });
 
+    return result;
+    console.log("result", result);
+};
+
+export const saveToCloudinary = async result => {
+    const cloudName = "daxrp4nar";
+    const apiKey = "868455186369275";
+    const uploadPreset = "tlccrm";
+    let uploadedUrls = [];
+
+    if (!result) throw new Error("no result");
+
+    for (const asset of result) {
+        try {
+            const { name, mimeType, uri } = asset;
+            const apiUrl = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
+
+            const formData = new FormData();
+            formData.append("file", {
+                uri,
+                type: mimeType,
+                name
+            });
+
+            formData.append("upload_preset", uploadPreset);
+            formData.append("api_key", apiKey);
+
+            const options = {
+                method: "post",
+                body: formData,
+                headers: {
+                    accept: "application/json"
+                }
+            };
+
+            const response = await fetch(apiUrl, options);
+            const data = await response.json();
+            const imageUri = data.secure_url;
+
+            uploadedUrls = [...uploadedUrls, imageUri];
+        } catch (err) {
+            throw new Error(err.message);
+        }
+    }
+
+    return uploadedUrls;
+};
+
+export const deleteImageByUrl = async imageUrl => {
+    try {
+        // Extract public ID from the image URL (assuming it follows the Cloudinary pattern)
+        const publicId = imageUrl.match(/\/([^/]+)\/[^/]+$/)[1];
+
+        // Cloudinary API endpoint for deleting by public ID
+        const deleteEndpoint = `https://api.cloudinary.com/v1_1/your_cloud_name/image/destroy/${publicId}`;
+
+        // Cloudinary credentials
+        const apiKey = "868455186369275";
+        const apiSecret = "QbqJgL592zxwFis-L4Ibs12qUdw";
+
+        // Encode credentials using FileSystem
+        const credentials = `${apiKey}:${apiSecret}`;
+        const encodedCredentials = await FileSystem.readAsStringAsync(
+            FileSystem.cacheDirectory + "encodedCredentials.txt",
+            { encoding: FileSystem.EncodingType.Base64 }
+        );
+
+        // Make a DELETE request to Cloudinary API
+        const options = {
+            method: "DELETE",
+            headers: {
+                Authorization: `Basic ${encodedCredentials}`
+            }
+        };
+
+        const response = await fetch(deleteEndpoint, options);
+
+        // Log the response
+        console.log(response);
+
+        // Return the response or handle it as needed
+        return response;
+    } catch (error) {
+        console.error(error.message);
+        // Handle the error as needed
+    }
+};
+
+export const getLocalStorage = async key => {
+    try {
+        const value = await AsyncStorage.getItem(key);
+        return value; // Return the retrieved value
+    } catch (error) {
+        console.error("Error retrieving data:", error);
+        return null; // Return null in case of error
+    }
+};
+
+export const setLocalStorage = async (key, value) => {
+    try {
+        await AsyncStorage.setItem(key, JSON.stringify(value));
+        console.log("Data stored successfully");
+    } catch (error) {
+        console.error("Error storing data:", error);
+    }
+};

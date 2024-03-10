@@ -1,6 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { DevotionalScreen, SDevotionalScreen } from "../screens";
-
+import DevotionForm from "../forms/DevotionForm";
 import { Text } from "react-native";
 import { CusIcon } from "../components";
 
@@ -12,9 +12,19 @@ const DevotionalNavigator = () => {
                 headerShown: false
             }}
         >
-            <Stack.Screen name="DevotionalScreen" component={DevotionalScreen} />
+            <Stack.Screen
+                name="DevotionalScreen"
+                component={DevotionalScreen}
+            />
 
-            <Stack.Screen name="SDevotionalScreen" component={SDevotionalScreen} />
+            <Stack.Screen
+                name="SDevotionalScreen"
+                component={SDevotionalScreen}
+            />
+            <Stack.Screen
+                name="DevotionForm"
+                component={DevotionForm}
+            />
         </Stack.Navigator>
     );
 };

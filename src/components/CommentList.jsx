@@ -1,13 +1,13 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import {
     View,
     Text,
     Image,
-    TouchableOpacity,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    Alert
 } from "react-native";
-import { getUser } from "../lib/utils";
 import { CusIcon } from "./";
+import { GlobalContext } from "../hooks/GlobalContext";
 const CommentList = ({
     c,
     feedId,
@@ -15,90 +15,68 @@ const CommentList = ({
     setReplyId,
     comReply,
     setComReply,
-    popup,
-    setPopup,
-    cid,
-    setCid,
+    handleCommentMenu,
     navigation,
     comment,
-    setComment,
-    popupRef
+    setComment,handleReply
 }) => {
-    const handleCommentMenu = id => {
-        setCid(cid === id ? "" : id);
-    };
-    const handleReply = (com, sen) => {
-        if (com && sen) {
-            setComReply(com);
-            setReplyId(sen);
-        }
-    };
-    const handleEdit = () => {
-        setComment(c.message);
-        setCid("");
-    };
-    const handleDelete = () => {};
+    const { getUser } = useContext(GlobalContext);
+   
+
     return (
-        <View className="flex-row py-2 px-3  flex-1 space-x-2 items-center">
+        <View className="flex-row py-2 px-3 space-x-2 items-start">
             <TouchableWithoutFeedback
                 onPress={() =>
                     navigation.navigate("ProfileScreen", { userId: c.senderId })
                 }
             >
-                <View className="h-8 w-8">
+                <View
+                    className="p-[1px] h-8 w-8 mx-1 rounded-full border
+                border-primary"
+                >
                     <Image
                         className="w-full h-full rounded-full"
                         style={{ resizeMode: "cover" }}
-                        source={getUser(c.senderId).image}
+                        source={{
+                            uri: getUser(c.senderId, "image")
+                        }}
                     />
                 </View>
             </TouchableWithoutFeedback>
-            <TouchableOpacity
+            <TouchableWithoutFeedback
                 onLongPress={() => handleReply(c._id, c.senderId)}
-                className="flex-1  space-y-0.5"
             >
-                <Text className="text-title font-semibold">
-                    {getUser(c.senderId).username}
-                </Text>
-                {c.reply.length && (
-                    <Text className="px-1 text-primary font-semibold">
-                        @{getUser(c.reply).username}
+                <View className="flex-1  space-y-0.5">
+                    <Text
+                        className="text-title
+                font-semibold"
+                    >
+                        {getUser(c.senderId, "username")}
                     </Text>
-                )}
+                    {c.replyId && (
+                        <Text
+                            className="px-1 text-primary
+                    font-semibold"
+                        >
+                            @{getUser(c.replyId, "username")}
+                        </Text>
+                    )}
 
-                <Text className="px-2">{c.message}</Text>
-            </TouchableOpacity>
+                    <Text className="px-2">{c.message}</Text>
+                </View>
+            </TouchableWithoutFeedback>
             <View>
                 {comReply === c._id && replyId === c.senderId ? (
-                    <Text className="text-body text-[10px]">
-                        replying... {getUser(replyId).username}
-                    </Text>
+                    <Text className="text-body text-[10px]">replying...</Text>
                 ) : null}
             </View>
-            <View className="relative">
-                {c._id === cid && (
-                    <TouchableOpacity ref={popupRef} className="absolute w-24 px-2 py-1 right-7 bg-white shadow-md shadow-black rounded-lg space-y-2">
-                        <Text
-                            onPress={() => handleEdit()}
-                            className="font-semibold"
-                        >
-                            Edit
-                        </Text>
-                        <Text
-                            onPress={() => handleDelete()}
-                            className="font-semibold"
-                        >
-                            Delete
-                        </Text>
-                    </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                    className="px-2 py-1"
-                    onPress={() => handleCommentMenu(c._id)}
-                >
-                    <CusIcon m="" name="ellipsis-vertical" size={15} />
-                </TouchableOpacity>
-            </View>
+
+            <CusIcon
+                action={() => handleCommentMenu( c)}
+                m=""
+                name="ellipsis-vertical"
+                size={15}
+            />
         </View>
     );
 };

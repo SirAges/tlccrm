@@ -1,6 +1,10 @@
 import { View, Text, Image } from "react-native";
-import { CusIcon } from "./";
+import { useState } from "react";
+import { markMyWords } from "../lib/data";
+import { CusIcon, MarkMyWord } from "./";
 const Header = ({ navigation }) => {
+    const [markMyWordsModal, setMarkMyWordsModal] = useState(false);
+  
     return (
         <View
             className="flex-row items-center px-3 py-2 w-full
@@ -20,14 +24,13 @@ const Header = ({ navigation }) => {
             </View>
             <View className="icons flex-row  items-center justify-end flex-1">
                 <CusIcon
-                    name="search"
+                    name="person-outline"
                     bg="bg-gray-100"
                     color="text-primary"
                     m={10}
-                    action={null}
+                    action={()=>setMarkMyWordsModal((prev)=>!prev)}
                 />
                 <CusIcon
-                  
                     bg="bg-gray-100"
                     color="text-primary"
                     m={5}
@@ -42,6 +45,11 @@ const Header = ({ navigation }) => {
                     action={() => navigation.toggleDrawer()}
                 />
             </View>
+            <MarkMyWord
+                markMyWords={markMyWords}
+                markMyWordsModal={markMyWordsModal}
+                setMarkMyWordsModal={setMarkMyWordsModal}
+            />
         </View>
     );
 };
