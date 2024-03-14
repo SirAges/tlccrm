@@ -16,30 +16,44 @@ import {
     roundNumber,
     getUser
 } from "../lib/utils";
-import {
-    AddButton,
-    CusIcon,
-    SearchFilter,
-    Separator,
-    Reactions,
-    CardActions
-} from "../components";
+import { CusIcon } from "../components";
 import { GlobalContext } from "../hooks/GlobalContext";
+import {
+    useGetQuotesQuery,
+    useDeleteBranchMutation
+} from "../redux/quote/quoteApiSlice";
 
 const MarkMyWord = ({ markMyWords, markMyWordsModal, setMarkMyWordsModal }) => {
     const { setValue, setFormArray } = useContext(GlobalContext);
-    const w = markMyWords[0];
-    const handleNavigation = () => {
-        setFormArray(markMyWordForm);
-        setValue({
-            title: "",
-            image: ""
-        });
-        navigation.navigate("FormScreen", {
-            name: "mark My Word",
-            multiple: false
-        });
-    };
+    const {
+        data: quotes,
+        isLoading,
+        isSuccess,
+        isError,
+        error,
+        refetch
+    } = useGetQuotesQuery("quoteslist", {
+        // pollingInterval: 15000,
+        refetchOnFocus: true,
+        refetchOnMountOrArgChange: true
+    });
+    const [allQuotes, setAllQuotes] = useState([]);
+    const [loading, setLoading] = useState([]);
+    const w = allQuotes[0];
+
+    useEffect(() => {
+        try {
+            setLoading(true);
+            if (quotes && quotes !== undefined) {
+                setAllQuotes(quotes);
+            }
+        } catch (error) {
+            console.log("error", error);
+        } finally {
+            setLoading(false);
+        }
+        return () => setLoading(false);
+    }, [quotes]);
 
     useEffect(() => {
         const backAction = () => {
@@ -78,23 +92,36 @@ const MarkMyWord = ({ markMyWords, markMyWordsModal, setMarkMyWordsModal }) => {
                     Mark my word
                 </Text>
                 <View className="w-full px-2">
-                    <View className="rounded-lg bg-white px-2 py-2 h-64">
-                        <Image
-                            source={w.image}
-                            style={{
-                                resizeMode: "center"
-                            }}
-                            className="w-full h-full rounded-lg"
-                        />
-                    </View>
-
-                    <Text
-                        className="absolute bg-white mx-2 px-2 w-full text-center
-                    text-2xl bottom-10"
+                    {w?.image && (
+                        <View className="rounded-lg bg-white px-2 py-2 h-64">
+                            <Image
+                                source={{ uri: w.image[0] }}
+                                style={{
+                                    resizeMode: "center"
+                                }}
+                                className="w-full h-full rounded-lg"
+                            />
+                        </View>
+                    )}
+                    <View
+                        className="absolute  mx-2 px-2 w-full 
+                   bottom-10"
                     >
-                        {w.title}
-                    </Text>
+                        <Text
+                            className="bg-white px-2 w-full text-center
+                    text-2xl"
+                        >
+                            {w?.text}
+                        </Text>
+                        <Text className="capitalize bg-black/50 py-2 text-center text-white ">
+                            {w?.author}
+                        </Text>
+                    </View>
                 </View>
+                <Text className="capitalize font-semibold text-white">
+                    | quote |
+                </Text>
+                <Text className="text-white text-justify">{w?.body}</Text>
             </View>
         </Modal>
     );

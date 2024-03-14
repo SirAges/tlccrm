@@ -20,7 +20,8 @@ import {
     CardActions,
     UserCard,
     ScreenLoader,
-    Loader
+    Loader,
+    ButtomMenu
 } from "../components";
 import {
     useGetMinMembersQuery,
@@ -90,14 +91,22 @@ const MembersList = ({ from, membersModal, setMembersModal, cUser, minId }) => {
         from === "ministry"
             ? useAddNewMinAdminMutation()
             : useAddNewDeptAdminMutation();
-    const [deleteAdmin] =from==="ministry"?
-    useDeleteMinAdminMutation():useDeleteDeptAdminMutation();
-    const { data: blocks } =from==="ministry"?
-    useGetMinBlocksQuery(minId):useGetDeptBlocksQuery(minId);
-    const [addNewBlock] =from==="ministry"?
-    useAddNewMinBlockMutation():useAddNewDeptBlockMutation();
-    const [deleteBlock] =from==="ministry"?
-    useDeleteMinBlockMutation():useDeleteDeptBlockMutation();
+    const [deleteAdmin] =
+        from === "ministry"
+            ? useDeleteMinAdminMutation()
+            : useDeleteDeptAdminMutation();
+    const { data: blocks } =
+        from === "ministry"
+            ? useGetMinBlocksQuery(minId)
+            : useGetDeptBlocksQuery(minId);
+    const [addNewBlock] =
+        from === "ministry"
+            ? useAddNewMinBlockMutation()
+            : useAddNewDeptBlockMutation();
+    const [deleteBlock] =
+        from === "ministry"
+            ? useDeleteMinBlockMutation()
+            : useDeleteDeptBlockMutation();
     const inAdmins = allAdmins.find(a => idx === a);
     const inBlocks = allBlocks.find(b => b === idx);
     useEffect(() => {
@@ -322,6 +331,32 @@ const MembersList = ({ from, membersModal, setMembersModal, cUser, minId }) => {
         return () => backHandler.remove(); // Cleanup the event listener on component unmount
     }, [membersModal]);
 
+    const options = [
+        {
+            name: "make admin",
+            undo: "remove admin",
+            func: handleMakeAdmin,
+            loader: making,
+            icon: "medal",
+            cond: inAdmins
+        },
+        {
+            name: "block member",
+            undo: "unblock",
+            func: handleBlock,
+            loader: blocking,
+            icon: "",
+            cond: inBlocks
+        },
+        {
+            name: "remove",
+            func: handleRemove,
+            loader: deleting,
+            icon: "close",
+            cond: null
+        }
+    ];
+
     let content;
 
     content = (
@@ -386,74 +421,12 @@ const MembersList = ({ from, membersModal, setMembersModal, cUser, minId }) => {
                 </View>
             </View>
             {dropdown && idx && (
-                <TouchableWithoutFeedback onPress={() => setDropdown(false)}>
-                    <View className="absolute bottom-0 h-full w-full bg-red-500 bg-transparent">
-                        <View
-                            className="w-full rounded-t-3xl absolute bottom-0
-                items-start px-5 py-5 shadow-lg shadow-black
-                bg-white max-h-56"
-                        >
-                            <Text className="capitalize w-full mb-3 font-bold text-xl text-center">
-                                Group Member Options
-                            </Text>
-                            <ScrollView className="w-full">
-                                <TouchableWithoutFeedback
-                                    onPress={() => handleBlock(idx)}
-                                >
-                                    <View className="flex-row items-center mb-3">
-                                        <CusIcon
-                                            name="radio-button-on"
-                                            color={
-                                                inBlocks
-                                                    ? "text-primary"
-                                                    : "text-danger"
-                                            }
-                                        />
-                                        <Text className="capitalize">
-                                            {inBlocks ? "unblock" : "block"}
-                                        </Text>
-                                        {blocking && <Loader />}
-                                    </View>
-                                </TouchableWithoutFeedback>
-                                <TouchableWithoutFeedback
-                                    onPress={() => handleRemove(idx)}
-                                >
-                                    <View className="flex-row mb-3  items-center">
-                                        <CusIcon
-                                            name="close"
-                                            color="text-danger"
-                                        />
-                                        <Text className="capitalize">
-                                            Remove
-                                        </Text>
-                                        {deleting && <Loader />}
-                                    </View>
-                                </TouchableWithoutFeedback>
-
-                                <TouchableWithoutFeedback
-                                    onPress={() => handleMakeAdmin(idx)}
-                                >
-                                    <View className="flex-row mb-3 items-center">
-                                        <CusIcon
-                                            name="medal"
-                                            color={
-                                                inAdmins
-                                                    ? "text-primary"
-                                                    : "text-danger"
-                                            }
-                                        />
-                                        <Text className="capitalize">
-                                            {inAdmins
-                                                ? "remove admin"
-                                                : "make admin"}
-                                        </Text>
-                                        {making && <Loader />}
-                                    </View>
-                                </TouchableWithoutFeedback>
-                            </ScrollView>
-                        </View>
-                    </View>
-                </TouchableWithoutFeedback>
+                <ButtomMenu
+                title="group members"
+                    options={options}
+                    setPopup={setDropdown}
+                    idx={idx}
+                />
             )}
         </Modal>
     );

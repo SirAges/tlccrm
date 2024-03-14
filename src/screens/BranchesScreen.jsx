@@ -24,7 +24,7 @@ import {
 } from "../components";
 
 import {
-    useGetBranchsQuery,
+    useGetBranchesQuery,
     useDeleteBranchMutation
 } from "../redux/branch/branchApiSlice";
 
@@ -50,7 +50,7 @@ const BranchesScreen = ({ navigation }) => {
         isError,
         error,
         refetch
-    } = useGetBranchsQuery("brancheslist", {
+    } = useGetBranchesQuery("brancheslist", {
         // pollingInterval: 15000,
         refetchOnFocus: true,
         refetchOnMountOrArgChange: true

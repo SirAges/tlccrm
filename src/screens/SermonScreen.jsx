@@ -15,7 +15,7 @@ import {
     AddButton,
     Form,
     ScreenLoader,
-    Loader
+    Loader,ImageGrid
 } from "../components/";
 import { announcementForm } from "../lib/forms";
 import { GlobalContext } from "../hooks/GlobalContext";
@@ -48,13 +48,13 @@ const SermonScreen = ({ navigation, route }) => {
 
             if (sermons && sermons !== undefined) {
                 setAllSermons(sermons);
-                console.log("sermon", sermons);
             }
         } catch (error) {
             console.log("error", error);
         } finally {
             setLoading(false);
         }
+
 
         return () => setLoading(false);
     }, [sermons]);
@@ -107,7 +107,6 @@ const SermonScreen = ({ navigation, route }) => {
                     (a.comments.length + a.reactions.length)
             )
             .slice(0, 10);
-    console.log("popularSermons", popularSermons);
 
     const onProgramClicked = (clicked, fil) => {
         setFilter(fil);
@@ -156,13 +155,7 @@ const SermonScreen = ({ navigation, route }) => {
                             {f.program}
                         </Text>
                     </View>
-                    <View className="w-full h-52">
-                        <Image
-                            className="w-full h-full"
-                            style={{ resizeMode: "cover" }}
-                            source={{ uri: f.image[0] }}
-                        />
-                    </View>
+                   <ImageGrid images={f.image} />
                     <Text className="text-body px-2">
                         {textTruncate(f.introduction, 100)}
                     </Text>

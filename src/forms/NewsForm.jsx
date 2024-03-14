@@ -76,11 +76,13 @@ const NewsForm = ({ route, navigation }) => {
         } catch (error) {
             console.log("error", error);
         } finally {
-            if (!addError && !updateError){ setAdding(false);
-            setUpdating(false);
-            setErrors(false);
+            if (!addError && !updateError) {
+                setAdding(false);
+                setUpdating(false);
+                setErrors(false);
 
-            navigation.goBack();}
+                navigation.goBack();
+            }
         }
     };
 
@@ -428,7 +430,7 @@ const NewsForm = ({ route, navigation }) => {
                     {name}
                 </Text>
             </View>
-            <FormsImageView />
+            <FormsImageView id={"image"} />
         </SafeAreaView>
     );
 };

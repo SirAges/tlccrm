@@ -9,41 +9,39 @@ const RegisterScreen = ({ navigation }) => {
     const [errMsg, setErrMsg] = useState("");
 
     const [value, setValue] = useState({
-       isVerified: false,
-    dateJoined: undefined,
-    username: "",
-    password: "",
-    about: "",
-    department: [],
-    image: "",
-    cImage: "",
-    roles: ["user"],
-    geolocation: {
-        lat: "",
-        lng: ""
-    },
-    onlinestatus: {
-        status: false,
-        timestamp: undefined
-    },
-    personal: {
-        fullname: "",
-        email: "",
-        phone: "",
+        isVerified: false,
+        dateJoined: "",
+        username: "",
+        password: "",
         about: "",
-        country: "",
-        state: "",
-        city: "",
-        address: "",
-        postalCode: "",
-        resident: {
+        departments: [],
+        ministry: "",
+        image: [],
+        friends: [],
+        hiddens: [],
+        requests: [],
+        cImage: [],
+        roles: [],
+        geolocation: {
+            lat: "",
+            lng: ""
+        },
+        personal: {
+            fullname: "",
+            email: "",
+            phone: "",
+            about: "",
             country: "",
             state: "",
             city: "",
             address: "",
-            postalCode: ""
+            postalCode: "",
+            residentCountry: "",
+            residentState: "",
+            residentCity: "",
+            residentAddress: "",
+            residentPostalCode: ""
         }
-    }
     });
     const [focused, setFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(true);
@@ -111,12 +109,14 @@ const RegisterScreen = ({ navigation }) => {
                             register form
                         </Text>
 
-                       <Text className="text-center text-danger font-medium
-                        capitalize">
+                        <Text
+                            className="text-center text-danger font-medium
+                        capitalize"
+                        >
                             {errMsg}
                         </Text>
                         {registerForm.map(l => (
-                            <View className="space-y-2 px-3">
+                            <View key={l.id} className="space-y-2 px-3">
                                 <Text className="font-medium text-md capitalize">
                                     {l.label}
                                 </Text>

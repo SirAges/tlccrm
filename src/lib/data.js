@@ -1,3 +1,5 @@
+import {APP_FACEBOOK,APP_TWITTER,APP_INSTAGRAM,APP_YOUTUBE,APP_ZOOM} from "@env";
+
 export const currentUser = {
     base: "user",
     _id: "1",
@@ -599,6 +601,13 @@ export const drawerMenu = [
         screen: "EventNavigator"
     },
     {
+        _id: "13",
+        title: "Mark my words",
+        name: "book",
+        outline: "book-outline",
+        screen: "QuoteNavigator"
+    },
+    {
         _id: "5",
         title: "Chosen School",
         name: "school",
@@ -628,6 +637,7 @@ export const drawerMenu = [
     },
 
     {
+      
         _id: "9",
         title: "Hymns",
         name: "book",
@@ -674,31 +684,31 @@ export const socialmedia = [
     {
         _id: "1",
         name: "facebook",
-        link: "https://facebook.com/tlccrmofficial",
+        link: APP_FACEBOOK,
         icon: "logo-facebook"
     },
     {
         _id: "2",
         name: "twitter",
-        link: "https://www.twitter.com/tlccrmofficial",
+        link: APP_TWITTER,
         icon: "logo-twitter"
     },
     {
         _id: "3",
         name: "instagram",
-        link: "https://www.instagram.com/tlccrmofficial/",
+        link: APP_INSTAGRAM,
         icon: "logo-instagram"
     },
     {
         _id: "4",
         name: "youtube",
-        link: "https://www.youtube.com/channel/UCTpSz18J4PkEN6a2_HsZsSw",
+        link: APP_YOUTUBE,
         icon: "logo-youtube"
     },
     {
         _id: "5",
         name: "zoom",
-        link: "https://us02web.zoom.us/j/6944015274?pwd=Y2lLZm8xbWZHM2lsUXkzdWt0RU8wUT09",
+        link: APP_ZOOM,
         icon: "videocam"
     }
 ];

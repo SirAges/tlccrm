@@ -9,7 +9,7 @@ const initialState = branchesAdapter.getInitialState();
 
 export const branchesApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
-        getBranchs: builder.query({
+        getBranches: builder.query({
             query: () => ({
                 url: "/branches",
                 validateStatus: (response, result) => {
@@ -60,28 +60,28 @@ export const branchesApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-    useGetBranchsQuery,
+    useGetBranchesQuery,
     useAddNewBranchMutation,
     useUpdateBranchMutation,
     useDeleteBranchMutation
 } = branchesApiSlice;
 
 // returns the query result object
-export const selectBranchsResult =
-    branchesApiSlice.endpoints.getBranchs.select();
+export const selectBranchesResult =
+    branchesApiSlice.endpoints.getBranches.select();
 
 // creates memoized selector
-const selectBranchsData = createSelector(
-    selectBranchsResult,
+const selectBranchesData = createSelector(
+    selectBranchesResult,
     branchesResult => branchesResult.data // normalized state object with ids & entities
 );
 
 //getSelectors creates these selectors and we rename them with aliases using destructuring
 export const {
-    selectAll: selectAllBranchs,
+    selectAll: selectAllBranches,
     selectById: selectBranchById,
     selectIds: selectBranchIds
     // Pass in a selector that returns the branches slice of state
 } = branchesAdapter.getSelectors(
-    state => selectBranchsData(state) ?? initialState
+    state => selectBranchesData(state) ?? initialState
 );

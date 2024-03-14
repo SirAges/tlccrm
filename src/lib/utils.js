@@ -8,28 +8,30 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { users } from "./data";
 import { Text } from "react-native";
 
-export const formatDateAgo = raw => {
-    const timestamp = new Date(raw);
+export const formatDateAgo = dateString => {
+    if(dateString) {
+    const timestamp = new Date(dateString);
     const timeAgo = formatDistanceToNow(timestamp, {
-      
         addSuffix: true
     });
-    return timeAgo;
+    return timeAgo;}
 };
 export const formatDate = dateString => {
-    const options = {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-        /*hour: 'numeric',
+    if (dateString) {
+        const options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+            /*hour: 'numeric',
   minute: 'numeric',
   second: 'numeric',
   timeZone: 'UTC'*/
-    };
-    const formatter = new Intl.DateTimeFormat("en-US", options);
-    const formattedDate = formatter.format(new Date(dateString));
+        };
+        const formatter = new Intl.DateTimeFormat("en-US", options);
+        const formattedDate = formatter.format(new Date(dateString));
 
-    return formattedDate;
+        return formattedDate;
+    }
 };
 
 export const formatDateTime = dateString => {
@@ -44,26 +46,26 @@ export const formatDateTime = dateString => {
     return formattedDate;
 };
 export const getDays = dateString => {
-    return getDay(new Date(dateString));
+    if (dateString) return getDay(new Date(dateString));
 };
 
 export const getDayText = dateString => {
-    return format(new Date(dateString), "EEE");
+    if (dateString) return format(new Date(dateString), "EEE");
 };
 
 export const getMonth = dateString => {
-    return format(new Date(dateString), "MMM");
+    if (dateString) return format(new Date(dateString), "MMM");
 };
 
 export const getYear = dateString => {
-    return format(new Date(dateString), "yyyy");
+    if (dateString) return format(new Date(dateString), "yyyy");
 };
 
 export const getTime = dateString => {
     return format(new Date(dateString), "HH:mm", { timeZone: "UTC" });
 };
 export const textTruncate = (text, len) => {
-    if (text.length >= len) {
+    if (text?.length >= len) {
         const newText = text.slice(0, len) + "...";
         return newText;
     } else {
@@ -106,7 +108,7 @@ export const processText = (value, len) => {
     if (value) {
         const textFormat = innerString => {
             const newText =
-                innerString.length > len
+                innerString?.length > len
                     ? innerString.slice(0, len) + "..."
                     : innerString;
             const text = newText.replace(newLineRegex, "\n");

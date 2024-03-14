@@ -448,10 +448,10 @@ export const ministriesApiSlice = apiSlice.injectEndpoints({
             providesTags: (result, error, arg) => {
                 if (result?.ids) {
                     return [
-                        { type: "DReaction", id: "LIST" },
-                        ...result.ids.map(id => ({ type: "DReaction", id }))
+                        { type: "MReaction", id: "LIST" },
+                        ...result.ids.map(id => ({ type: "MReaction", id }))
                     ];
-                } else return [{ type: "DReaction", id: "LIST" }];
+                } else return [{ type: "MReaction", id: "LIST" }];
             }
         }),
         addNewMinReaction: builder.mutation({
@@ -461,7 +461,7 @@ export const ministriesApiSlice = apiSlice.injectEndpoints({
                 body: reaction,
                 responseHandler: "text"
             }),
-            invalidatesTags: [{ type: "DReaction", id: "LIST" }]
+            invalidatesTags: [{ type: "MReaction", id: "LIST" }]
         }),
         updateMinReaction: builder.mutation({
             query: ({ minId, feedId, reactionId, ...reaction }) => ({
@@ -471,7 +471,7 @@ export const ministriesApiSlice = apiSlice.injectEndpoints({
                 responseHandler: "text"
             }),
             invalidatesTags: (result, error, arg) => [
-                { type: "DReaction", id: arg.id }
+                { type: "MReaction", id: arg.id }
             ]
         }),
         deleteMinReaction: builder.mutation({
@@ -481,9 +481,55 @@ export const ministriesApiSlice = apiSlice.injectEndpoints({
                 responseHandler: "text"
             }),
             invalidatesTags: (result, error, arg) => [
-                { type: "DReaction", id: arg.id }
+                { type: "MReaction", id: arg.id }
             ]
-        })
+        }),
+         getMinRequests: builder.query({
+            query: minId => ({
+                url: `/ministries/${minId}/requests`,
+                validateStatus: (response, result) => {
+                    return response.status === 200 && !result.isError;
+                }
+            }),
+
+            providesTags: (result, error, arg) => {
+                if (result?.ids) {
+                    return [
+                        { type: "DRequest", id: "LIST" },
+                        ...result.ids.map(id => ({ type: "DRequest", id }))
+                    ];
+                } else return [{ type: "DRequest", id: "LIST" }];
+            }
+        }),
+        addNewMinRequest: builder.mutation({
+            query: ({ minId, userId }) => ({
+                url: `/ministries/${minId}/requests/${userId}`,
+                method: "POST",
+                responseHandler: "text"
+            }),
+            invalidatesTags: [{ type: "DRequest", id: "LIST" }]
+        }),
+        updateMinRequest: builder.mutation({
+            query: ({ minId, ...value }) => ({
+                url: `/ministries/${minId}/requests/${value._id}`,
+                method: "PATCH",
+                body: value,
+                responseHandler: "text"
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "DRequest", id: arg.id }
+            ]
+        }),
+        deleteMinRequest: builder.mutation({
+            query: ({ minId, requestId }) => ({
+                url: `/ministries/${minId}/requests/${requestId}`,
+                method: "DELETE",
+                responseHandler: "text"
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "DRequest", id: arg.id }
+            ]
+        }),
     })
 });
 
@@ -527,7 +573,11 @@ export const {
     useGetMinReactionsQuery,
     useAddNewMinReactionMutation,
     useUpdateMinReactionMutation,
-    useDeleteMinReactionMutation
+    useDeleteMinReactionMutation,
+    useGetMinRequestsQuery,
+    useAddNewMinRequestMutation,
+    useUpdateMinRequestMutation,
+    useDeleteMinRequestMutation
 } = ministriesApiSlice;
 
 // returns the query result object

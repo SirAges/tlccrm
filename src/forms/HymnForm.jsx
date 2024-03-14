@@ -75,7 +75,7 @@ const HymnForm = ({ route, navigation }) => {
         } catch (error) {
             console.log("error", error);
         } finally {
-          console.log('error', addError,updateError)
+            console.log("error", addError, updateError);
             setAdding(false);
             setUpdating(false);
             setErrors(false);
@@ -111,7 +111,8 @@ const HymnForm = ({ route, navigation }) => {
                 </Text>
                 <ScrollView
                     scrollEnabled
-                    className="flex-1" keyboardShouldPersistTaps="handled"
+                    className="flex-1"
+                    keyboardShouldPersistTaps="handled"
                     bounces={false}
                     contentInsetAdjustmentBehavior="always"
                 >
@@ -427,7 +428,7 @@ const HymnForm = ({ route, navigation }) => {
                     {name}
                 </Text>
             </View>
-            <FormsImageView />
+            <FormsImageView id={"image"} />
         </SafeAreaView>
     );
 };

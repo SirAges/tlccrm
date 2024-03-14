@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import MinistryNavigator from "./MinistryNavigator";
 import DepartmentNavigator from "./DepartmentNavigator";
 import DevotionalNavigator from "./DevotionalNavigator";
-
+import QuoteNavigator from "./QuoteNavigator";
 import EventNavigator from "./EventNavigator";
 import HymnNavigator from "./HymnNavigator";
 import AnnouncementNavigator from "./AnnouncementNavigator";
@@ -79,6 +79,7 @@ const DrawerNavigator = () => {
                 name="MinistryNavigator"
                 component={MinistryNavigator}
             />
+            <Drawer.Screen name="QuoteNavigator" component={QuoteNavigator} />
             <Drawer.Screen name="EventNavigator" component={EventNavigator} />
             <Drawer.Screen
                 name="DepartmentNavigator"

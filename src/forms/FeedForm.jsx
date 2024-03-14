@@ -464,7 +464,7 @@ const FeedForm = ({ route, navigation }) => {
                     {name}
                 </Text>
             </View>
-            <FormsImageView />
+            <FormsImageView id={"image"} />
         </SafeAreaView>
     );
 };

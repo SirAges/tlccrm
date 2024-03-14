@@ -21,12 +21,13 @@ import {
     Reactions,
     CardActions,
     MembersList,
+    RequestList,
     AnnouncementsList,
     CocsList,
     MediaList,
     ScreenLoader,
     Loader,
-    ImageViewer
+    ImageViewer,ImageGrid
 } from "../components";
 import { feedForm, ministryForm } from "../lib/forms";
 
@@ -40,7 +41,7 @@ const SMinistryScreen = ({ navigation, route }) => {
     const { currentUser, setValue, setFormArray, minId, setMinId } =
         useContext(GlobalContext);
     const [deleting, setDeleting] = useState(false);
-const [allMedia, setAllMedia] = useState([]);
+    const [allMedia, setAllMedia] = useState([]);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [loading, setLoading] = useState(false);
     const [deletingItem, setDeletingItem] = useState(null);
@@ -48,6 +49,7 @@ const [allMedia, setAllMedia] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState(null);
     const [membersModal, setMembersModal] = useState(false);
+    const [requestsModal, setRequestsModal] = useState(false);
     const [announcementsModal, setAnnouncementsModal] = useState(false);
     const [cocsModal, setCocsModal] = useState(false);
     const [mediaModal, setMediaModal] = useState(false);
@@ -64,12 +66,11 @@ const [allMedia, setAllMedia] = useState([]);
         deleteMinistry,
         { isSuccess: deleted, isError: deleteIsError, error: deleteError }
     ] = useDeleteMinistryMutation();
-    
+
     useEffect(() => {
         setLoading(true);
         try {
             setMinId(m._id);
-
             if (feeds && feeds !== undefined) {
                 const sorted = [...feeds].sort((a, b) => {
                     const dateA = new Date(a.createdAt);
@@ -87,15 +88,15 @@ const [allMedia, setAllMedia] = useState([]);
 
         return () => setLoading(false);
     }, [feeds]);
-     useEffect(() => {
-      if(feeds){
-        setAllMedia([])
-        for (let med of feeds) {
-          
-            if (med?.image) {
-                setAllMedia(prev => [...prev, ...med.image]);
+    useEffect(() => {
+        if (feeds) {
+            setAllMedia([]);
+            for (let med of feeds) {
+                if (med?.image) {
+                    setAllMedia(prev => [...prev, ...med.image]);
+                }
             }
-        }}
+        }
     }, [feeds]);
     const refresh = async () => {
         setIsRefreshing(true);
@@ -191,13 +192,7 @@ const [allMedia, setAllMedia] = useState([]);
                         </Text>
                     </View>
                     {f.image.length ? (
-                        <View className="w-full h-52  bg-white">
-                            <Image
-                                className=" w-full h-full"
-                                style={{ resizeMode: "cover" }}
-                                source={{ uri: f.image[0] }}
-                            />
-                        </View>
+                        <ImageGrid images={f.image} />
                     ) : null}
 
                     <View>
@@ -232,7 +227,11 @@ const [allMedia, setAllMedia] = useState([]);
                         {m.title}
                     </Text>
                     <View className=" flex-row space-x-2 items-center">
-                        
+                        <CusIcon
+                            name="medal"
+                            color="text-primary"
+                            action={() => setRequestsModal(prev => !prev)}
+                        />
                         <CusIcon
                             name="people"
                             color="text-primary"
@@ -279,8 +278,16 @@ const [allMedia, setAllMedia] = useState([]);
             </View>
             <View className="flex-1">{content}</View>
             <View>
+                <RequestList
+                    from="ministry"
+                    requestsModal={requestsModal}
+                    minId={minId}
+                    cUser={currentUser}
+                    setRequestsModal={setRequestsModal}
+                    request={m.request}
+                />
                 <MembersList
-                from="ministry"
+                    from="ministry"
                     membersModal={membersModal}
                     minId={minId}
                     cUser={currentUser}
@@ -288,7 +295,7 @@ const [allMedia, setAllMedia] = useState([]);
                     members={m.members}
                 />
                 <AnnouncementsList
-                from="ministry"
+                    from="ministry"
                     announcementsModal={announcementsModal}
                     setAnnouncementsModal={setAnnouncementsModal}
                     minId={minId}
@@ -296,7 +303,7 @@ const [allMedia, setAllMedia] = useState([]);
                     announcements={m.announcements}
                 />
                 <CocsList
-                from="ministry"
+                    from="ministry"
                     cocsModal={cocsModal}
                     setCocsModal={setCocsModal}
                     minId={minId}
@@ -304,7 +311,7 @@ const [allMedia, setAllMedia] = useState([]);
                     cocs={m.cocs}
                 />
                 <MediaList
-                from="ministry"
+                    from="ministry"
                     mediaModal={mediaModal}
                     setMediaModal={setMediaModal}
                     allMedia={allMedia}

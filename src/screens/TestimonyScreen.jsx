@@ -6,7 +6,6 @@ import {
     useDeleteTestimonyMutation
 } from "../redux/testimony/testimonyApiSlice";
 import { textTruncate, formatDateAgo } from "../lib/utils";
-import { testimonyForm } from "../lib/forms";
 import {
     SearchFilter,
     Reactions,
@@ -15,9 +14,10 @@ import {
     AddButton,
     Form,
     ScreenLoader,
-    Loader
+    Loader,
+    ImageGrid
 } from "../components/";
-import { announcementForm } from "../lib/forms";
+import { testimonyForm } from "../lib/forms";
 import { GlobalContext } from "../hooks/GlobalContext";
 const TestimonyScreen = ({ navigation, route }) => {
     const { obj, setObj, setValue, setFormArray } = useContext(GlobalContext);
@@ -48,7 +48,6 @@ const TestimonyScreen = ({ navigation, route }) => {
 
             if (testimonies && testimonies !== undefined) {
                 setAllTestimonies(testimonies);
-                console.log("testimony", testimonies);
             }
         } catch (error) {
             console.log("error", error);
@@ -78,7 +77,7 @@ const TestimonyScreen = ({ navigation, route }) => {
             title: "",
             image: [],
             text: "",
-            body: [],
+            body: "",
             program: "",
             introduction: ""
         });
@@ -107,7 +106,6 @@ const TestimonyScreen = ({ navigation, route }) => {
                     (a.comments.length + a.reactions.length)
             )
             .slice(0, 10);
-    console.log("popularTestimonies", popularTestimonies);
 
     const onProgramClicked = (clicked, fil) => {
         setFilter(fil);
@@ -136,33 +134,31 @@ const TestimonyScreen = ({ navigation, route }) => {
             data={allTestimonies}
             renderItem={({ item: f }) => (
                 <View className="space-y-1 mb-1 py-2 bg-white">
-                    <View className="flex-row justify-between items-center px-2">
+                    <View
+                        className=" w-full justify-between items-start
+                  px-2"
+                    >
                         <Text
                             onPress={() =>
                                 navigation.navigate("STestimonyScreen", {
                                     feed: f
                                 })
                             }
-                            className="text-title text-lg font-semibold capitalize"
+                            className="flex-1 text-justify text-title text-lg font-semibold capitalize"
                         >
-                            {textTruncate(f.title, 30)}
+                            {f.title}
                         </Text>
                         <Text
                             onPress={() =>
                                 onProgramClicked(f.program, "program")
                             }
-                            className="text-primary  px-2 text-xs  font-semibold"
+                            className="text-primary w-full   text-sm
+                            text-right font-semibold capitalize"
                         >
-                            {f.program}
+                            testimony from {f.program}
                         </Text>
                     </View>
-                    <View className="w-full h-52">
-                        <Image
-                            className="w-full h-full"
-                            style={{ resizeMode: "cover" }}
-                            source={{ uri: f.image[0] }}
-                        />
-                    </View>
+                    <ImageGrid images={f.image} />
                     <Text className="text-body px-2">
                         {textTruncate(f.introduction, 100)}
                     </Text>

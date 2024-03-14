@@ -1,27 +1,32 @@
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { CusIcon } from "./";
 
 const ScreenLoader = ({ refresh, text }) => {
     return (
-        <View className="flex-1 bg-black/50 items-center justify-center">
-            <Animatable.Text
-                animation="rotate"
+        <View className="flex-1 bg-background items-center space-y-3 justify-center">
+            <Animatable.View
+                animation="pulse"
                 iterationCount="infinite"
                 duration={3000}
                 easing="linear"
             >
-                <CusIcon name="reload-outline" color="text-white" size={34} />
-            </Animatable.Text>
-            <Text className="text-xl font-medium capitalize text-white">
+                <Image
+                    className="w-20 h-20 rounded-full"
+                    source={require("../../assets/images/icon.png")}
+                />
+            </Animatable.View>
+
+            <Text className="font-medium capitalize text-primary">
                 {text}
             </Text>
 
             {refresh && (
                 <Text
-                onPress={()=>refresh()}
-                className="capitalize px-2 py-3 text-white bg-primary rounded-lg
-                text-xl">
+                    onPress={() => refresh()}
+                    className="capitalize px-2 py-3 text-primary rounded-lg
+                "
+                >
                     Reload content
                 </Text>
             )}

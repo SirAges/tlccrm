@@ -483,7 +483,53 @@ export const departmentsApiSlice = apiSlice.injectEndpoints({
             invalidatesTags: (result, error, arg) => [
                 { type: "DReaction", id: arg.id }
             ]
-        })
+        }),
+         getDeptRequests: builder.query({
+            query: minId => ({
+                url: `/departments/${minId}/requests`,
+                validateStatus: (response, result) => {
+                    return response.status === 200 && !result.isError;
+                }
+            }),
+
+            providesTags: (result, error, arg) => {
+                if (result?.ids) {
+                    return [
+                        { type: "DRequest", id: "LIST" },
+                        ...result.ids.map(id => ({ type: "DRequest", id }))
+                    ];
+                } else return [{ type: "DRequest", id: "LIST" }];
+            }
+        }),
+        addNewDeptRequest: builder.mutation({
+            query: ({ minId, userId }) => ({
+                url: `/departments/${minId}/requests/${userId}`,
+                method: "POST",
+                responseHandler: "text"
+            }),
+            invalidatesTags: [{ type: "DRequest", id: "LIST" }]
+        }),
+        updateDeptRequest: builder.mutation({
+            query: ({ minId, ...value }) => ({
+                url: `/departments/${minId}/requests/${value._id}`,
+                method: "PATCH",
+                body: value,
+                responseHandler: "text"
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "DRequest", id: arg.id }
+            ]
+        }),
+        deleteDeptRequest: builder.mutation({
+            query: ({ minId, requestId }) => ({
+                url: `/departments/${minId}/requests/${requestId}`,
+                method: "DELETE",
+                responseHandler: "text"
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "DRequest", id: arg.id }
+            ]
+        }),
     })
 });
 
@@ -527,7 +573,11 @@ export const {
     useGetDeptReactionsQuery,
     useAddNewDeptReactionMutation,
     useUpdateDeptReactionMutation,
-    useDeleteDeptReactionMutation
+    useDeleteDeptReactionMutation,
+    useGetDeptRequestsQuery,
+    useAddNewDeptRequestMutation,
+    useUpdateDeptRequestMutation,
+    useDeleteDeptRequestMutation
 } = departmentsApiSlice;
 
 // returns the query result object

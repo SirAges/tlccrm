@@ -33,3 +33,4 @@ export { default as LoginScreen } from "./LoginScreen";
 export { default as RegisterScreen } from "./RegisterScreen";
 export { default as SplashScreen } from "./SplashScreen";
 export { default as EventScreen } from "./EventScreen";
+export { default as QuoteScreen } from "./QuoteScreen";

@@ -16,7 +16,6 @@ const DatePicker = ({ id, handleInputChange, name, value }) => {
             if (id === "end") {
                 const selectedDate = new Date(d);
                 const minDate = new Date(value.start);
-              
 
                 const canPick = selectedDate > minDate;
                 if (canPick) {
@@ -43,7 +42,7 @@ const DatePicker = ({ id, handleInputChange, name, value }) => {
         >
             <CusIcon name="calendar" action={showDatePicker} />
             <Text className="font-medium">
-                {value ? formatDateTime(valueType) : "No date selected"}
+                {valueType? formatDateTime(valueType) : "No date selected"}
             </Text>
             <DateTimePickerModal
                 date={date.current}

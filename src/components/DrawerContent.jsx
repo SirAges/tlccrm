@@ -29,32 +29,41 @@ export const DrawerContent = ({ navigation, props }) => {
     };
     const { currentUser: u, setPersist } = useContext(GlobalContext);
     const [logout, { isLoading }] = useLogoutMutation();
-  
+
     const handleLogout = async () => {
         const { data } = await logout();
 
         if (data) {
-        
             dispatch(logOut());
             setPersist(false);
         }
     };
     return (
-        <SafeAreaView className="flex-1   bg-white">
-            <View className="px-2 items-center bg-white py-2">
-                <View className="backbtn justify-between  flex-row items-center w-full">
+        <SafeAreaView className="flex flex-1 space-y-2 bg-white">
+            <View className="flex space-y-3 px-2">
+                <View
+                    className="backbtn justify-between flex-row items-center
+               my-3"
+                >
                     <View
                         className=" justify-between flex-row
                     items-center space-x-2"
                     >
                         <CusIcon
                             name="arrow-back"
+                            color="text-primary"
                             action={() => navigation.closeDrawer()}
                         />
 
-                        <Text className="font-extrabold text-2xl">Menu</Text>
+                        <Text className="font-extrabold text-2xl text-primary">
+                            Menu
+                        </Text>
                     </View>
-                    <CusIcon action={() => handleLogout()} name="power" />
+                    <CusIcon
+                        color="text-primary"
+                        action={() => handleLogout()}
+                        name="power"
+                    />
                 </View>
                 <TouchableWithoutFeedback
                     onPress={() =>
@@ -66,21 +75,21 @@ export const DrawerContent = ({ navigation, props }) => {
                 >
                     <View
                         className="profile flex-row items-center justify-between
-            bg-white rounded-lg px-2 py-1 space-x-2 shadow-md shadow-shadow/40 w-full"
+            bg-background rounded-lg px-2 py-1 space-x-2 shadow-md shadow-shadow/40 w-full"
                     >
                         <View
                             className="relative h-12 w-12 rounded-full p-0.5 border
                     border-primary "
                         >
                             <Image
-                                style={{ resizeMode: "contain" }}
+                                style={{ resizeMode: "cover" }}
                                 className="w-full h-full rounded-full"
-                                source={u && u.image}
+                                source={{ uri: u?.image[0] }}
                             />
                         </View>
                         <View className="flex-1">
                             <Text className="capitalize font-black text-title">
-                                {u && u.username}
+                                { u?.username}
                             </Text>
                             <Text className="text-body font-medium">
                                 View your profile
@@ -91,7 +100,7 @@ export const DrawerContent = ({ navigation, props }) => {
             </View>
 
             <View className="flex-1 px-1">
-                <ScrollView>
+                <ScrollView className="flex-1">
                     <View className="menus flex-row items-start  flex-wrap pb-10">
                         {drawerMenu.map(d => (
                             <TouchableWithoutFeedback
@@ -99,13 +108,14 @@ export const DrawerContent = ({ navigation, props }) => {
                                 key={d._id}
                             >
                                 <View
-                                    className="bg-white shadow-md shadow-black/60 px-4 py-5
-                            mb-2 mx-1  grow border border-primary/10
-                            rounded-lg  max-w-[200px] flex-row items-center
-                            "
+                                    className="bg-background px-4 py-5 mb-2 mx-1
+                                grow justify-center max-w-[200px] space-x-2
+                                flex-row items-center rounded-sm"
                                 >
                                     <CusIcon name={d.outline} />
-                                    <Text className="w-fit">{d.title}</Text>
+                                    <Text className="w-fit font-semibold">
+                                        {d.title}
+                                    </Text>
                                 </View>
                             </TouchableWithoutFeedback>
                         ))}
@@ -113,18 +123,23 @@ export const DrawerContent = ({ navigation, props }) => {
                 </ScrollView>
             </View>
 
-            <View className=" bg-white social flex-row items-center justify-between px-2">
+            <View
+                className=" bg-white social flex-row items-center
+            justify-between px-2 space-y-2"
+            >
                 {socialmedia.map(s => (
-                    <TouchableOpacity
+                    <TouchableWithoutFeedback
                         key={s._id}
                         className="items-center"
                         onPress={() => Linking.openURL(s.link)}
                     >
-                        <CusIcon name={s.icon} />
-                        <Text className="capitalize text-primary">
-                            {s.name}
-                        </Text>
-                    </TouchableOpacity>
+                        <View>
+                            <CusIcon name={s.icon} />
+                            <Text className="capitalize text-primary">
+                                {s.name}
+                            </Text>
+                        </View>
+                    </TouchableWithoutFeedback>
                 ))}
             </View>
         </SafeAreaView>

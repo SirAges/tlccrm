@@ -39,7 +39,7 @@ const EventForm = ({ route, navigation }) => {
     const [errors, setErrors] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
     const { title, image, date, body } = value;
-    
+
     const canCreate = [].every(Boolean) && (!adding || !updating);
 
     const [valueReady, setValueReady] = useState(false);
@@ -74,7 +74,6 @@ const EventForm = ({ route, navigation }) => {
                     return;
                 }
                 const res = await updateEvent(value);
-          
             }
         } catch (error) {
             console.log("error", error);
@@ -432,7 +431,7 @@ const EventForm = ({ route, navigation }) => {
                     {name}
                 </Text>
             </View>
-            <FormsImageView />
+            <FormsImageView id={"image"} />
         </SafeAreaView>
     );
 };

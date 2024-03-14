@@ -14,10 +14,10 @@ import {
     FormsImageView
 } from "../components";
 import {
-    useAddNewSermonMutation,
-    useUpdateSermonMutation
+    useAddNewTestimonyMutation,
+    useUpdateTestimonyMutation
 } from "../redux/testimony/testimonyApiSlice";
-const SermonForm = ({ route, navigation }) => {
+const TestimonyForm = ({ route, navigation }) => {
     const { name, multiple, action } = route.params;
 
     const {
@@ -42,13 +42,13 @@ const SermonForm = ({ route, navigation }) => {
     const canCreate = [title, body].every(Boolean) && (!adding || !updating);
 
     const [
-        updateSermon,
+        updateTestimony,
         { isSuccess: updated, isError: updateIsError, error: updateError }
-    ] = useUpdateSermonMutation();
+    ] = useUpdateTestimonyMutation();
     const [
-        addNewSermon,
+        addNewTestimony,
         { isSuccess: added, isError: addIsError, error: addError }
-    ] = useAddNewSermonMutation();
+    ] = useAddNewTestimonyMutation();
     const handleRemovePoint = clicked => {
         const newPoints = value.body.filter((p, i) => i !== clicked);
         console.log("first", newPoints);
@@ -67,14 +67,15 @@ const SermonForm = ({ route, navigation }) => {
                     setErrorMsg(addError.message);
                     return;
                 }
-                const res = await addNewSermon(value);
+                const res = await addNewTestimony(value);
+              
             } else if (action === "edit") {
                 setUpdating(true);
                 if (updateIsError) {
                     setErrorMsg(updateError.message);
                     return;
                 }
-                const res = await updateSermon(value);
+                const res = await updateTestimony(value);
                 console.log("ressermfom", res);
             }
         } catch (error) {
@@ -85,7 +86,7 @@ const SermonForm = ({ route, navigation }) => {
                 setUpdating(false);
                 setErrors(false);
 
-                navigation.navigate("SermonScreen");
+                navigation.navigate("TestimonyScreen");
             }
         }
     };
@@ -476,8 +477,8 @@ const SermonForm = ({ route, navigation }) => {
                     {name}
                 </Text>
             </View>
-            <FormsImageView />
+            <FormsImageView id={"image"} />
         </SafeAreaView>
     );
 };
-export default SermonForm;
+export default TestimonyForm;

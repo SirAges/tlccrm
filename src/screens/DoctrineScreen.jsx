@@ -18,14 +18,14 @@ import {
     ScreenLoader,
     Loader
 } from "../components";
-import { ministryForm } from "../lib/forms";
+import { doctrineForm } from "../lib/forms";
 import { GlobalContext } from "../hooks/GlobalContext";
 
 import {
-    useGetMinistriesQuery,
-    useDeleteMinistryMutation
-} from "../redux/ministry/ministryApiSlice";
-const MinistryScreen = ({ navigation }) => {
+    useGetDoctrinesQuery,
+    useDeleteDoctrineMutation
+} from "../redux/doctrine/doctrineApiSlice";
+const DoctrineScreen = ({ navigation }) => {
     const { setValue, setFormArray } = useContext(GlobalContext);
 
     const [deleting, setDeleting] = useState(false);
@@ -33,35 +33,35 @@ const MinistryScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const [deletingItem, setDeletingItem] = useState(null);
     const [dropDown, setDropDown] = useState(false);
-    const [allMinistries, setAllMinistries] = useState([]);
+    const [allDoctrines, setAllDoctrines] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState(null);
     const [idx, setIdx] = useState(null);
 
     const {
-        data: ministries,
+        data: doctrines,
         isLoading,
         isSuccess,
         isError,
         error,
         refetch
-    } = useGetMinistriesQuery("ministrieslist", {
+    } = useGetDoctrinesQuery("doctrineslist", {
         pollingInterval: 15000,
         refetchOnFocus: true,
         refetchOnMountOrArgChange: true
     });
     const [
-        deleteMinistry,
+        deleteDoctrine,
         { isSuccess: deleted, isError: deleteIsError, error: deleteError }
-    ] = useDeleteMinistryMutation();
+    ] = useDeleteDoctrineMutation();
 
     useEffect(() => {
         try {
             setLoading(true);
 
-            if (ministries && ministries !== undefined) {
-                setAllMinistries(ministries);
-                console.log("ministries", allMinistries);
+            if (doctrines && doctrines !== undefined) {
+                setAllDoctrines(doctrines);
+                console.log("doctrines", allDoctrines);
             }
         } catch (error) {
             console.log("error", error);
@@ -70,7 +70,7 @@ const MinistryScreen = ({ navigation }) => {
         }
 
         return () => setLoading(false);
-    }, [ministries]);
+    }, [doctrines]);
     const refresh = async () => {
         setIsRefreshing(true);
         setLoading(true);
@@ -90,7 +90,7 @@ const MinistryScreen = ({ navigation }) => {
             try {
                 setDeleting(true);
                 setDeletingItem(id);
-                await deleteMinistry(id);
+                await deleteDoctrine(id);
             } catch (error) {
                 console.log("del", deleteError);
                 throw new Error(error.message);
@@ -102,8 +102,8 @@ const MinistryScreen = ({ navigation }) => {
             }
         };
         Alert.alert(
-            "Delete This Ministry",
-            "Are you sure you want to delete this ministry",
+            "Delete This Doctrine",
+            "Are you sure you want to delete this doctrine",
             [
                 {
                     text: "Cancel",
@@ -115,23 +115,23 @@ const MinistryScreen = ({ navigation }) => {
     };
 
     const handleEdit = item => {
-        setFormArray(ministryForm);
+        setFormArray(doctrineForm);
         setValue(item);
-        navigation.navigate("MinistryForm", {
-            name: "ministry",
+        navigation.navigate("DoctrineForm", {
+            name: "doctrine",
             action: "edit",
             multiple: false
         });
     };
     const handleNavigation = () => {
-        setFormArray(ministryForm);
+        setFormArray(doctrineForm);
         setValue({
             title: "",
             text: "",
             body: ""
         });
-        navigation.navigate("MinistryForm", {
-            name: "ministry",
+        navigation.navigate("DoctrineForm", {
+            name: "doctrine",
             action: "create",
             multiple: false
         });
@@ -147,16 +147,16 @@ const MinistryScreen = ({ navigation }) => {
     };
     useEffect(() => {
         if (filter && searchTerm) {
-            const clickedArr = allMinistries.filter(
+            const clickedArr = allDoctrines.filter(
                 f => f[filter].toLowerCase() === searchTerm.toLowerCase()
             );
             if (clickedArr.length) {
-                setAllMinistries(clickedArr);
+                setAllDoctrines(clickedArr);
             } else {
-                setAllMinistries(ministries);
+                setAllDoctrines(doctrines);
             }
         } else {
-            setAllMinistries(ministries);
+            setAllDoctrines(doctrines);
         }
     }, [filter, searchTerm]);
     let content;
@@ -165,7 +165,7 @@ const MinistryScreen = ({ navigation }) => {
             keyExtractor={d => d._id}
             refreshing={isRefreshing}
             onRefresh={refresh}
-            data={allMinistries}
+            data={allDoctrines}
             renderItem={({ item: d }) => (
                 <TouchableWithoutFeedback onPress={() => handleDropdown(d._id)}>
                     <View
@@ -218,19 +218,19 @@ const MinistryScreen = ({ navigation }) => {
     return (
         <SafeAreaView className="bg-white flex-1">
             <Text className="uppercase text-2xl text-primary font-extrabold p-2  text-center">
-                Ministries
+                Doctrines
             </Text>
 
             <SearchFilter
-                data={ministries}
+                data={doctrines}
                 searchTerm={searchTerm}
                 filterCond={["title", "body"]}
                 sortCond={["title"]}
                 setSearchTerm={setSearchTerm}
                 filter={filter}
                 setFilter={setFilter}
-                searchedData={allMinistries}
-                setData={setAllMinistries}
+                searchedData={allDoctrines}
+                setData={setAllDoctrines}
             />
             <View className="bg-white flex-1">{content}</View>
 
@@ -239,4 +239,4 @@ const MinistryScreen = ({ navigation }) => {
     );
 };
 
-export default MinistryScreen;
+export default DoctrineScreen;

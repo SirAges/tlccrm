@@ -26,7 +26,9 @@ import {
     MediaList,
     ScreenLoader,
     Loader,
-    ImageViewer
+    ImageViewer,
+    RequestList,
+    ImageGrid
 } from "../components";
 import { feedForm, departmentForm } from "../lib/forms";
 import {
@@ -48,6 +50,7 @@ const SDepartmentScreen = ({ navigation, route }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState(null);
     const [membersModal, setMembersModal] = useState(false);
+    const [requestsModal, setRequestsModal] = useState(false);
     const [announcementsModal, setAnnouncementsModal] = useState(false);
     const [cocsModal, setCocsModal] = useState(false);
     const [mediaModal, setMediaModal] = useState(false);
@@ -190,15 +193,7 @@ const SDepartmentScreen = ({ navigation, route }) => {
                             {f.title}
                         </Text>
                     </View>
-                    {f.image.length ? (
-                        <View className="w-full h-52  bg-white">
-                            <Image
-                                className=" w-full h-full"
-                                style={{ resizeMode: "cover" }}
-                                source={{ uri: f.image[0] }}
-                            />
-                        </View>
-                    ) : null}
+                    {f.image.length ? <ImageGrid images={f.image} /> : null}
 
                     <View>
                         <CardActions
@@ -232,7 +227,11 @@ const SDepartmentScreen = ({ navigation, route }) => {
                         {m.title}
                     </Text>
                     <View className=" flex-row space-x-2 items-center">
-                       
+                        <CusIcon
+                            name="medal"
+                            color="text-primary"
+                            action={() => setRequestsModal(prev => !prev)}
+                        />
                         <CusIcon
                             name="people"
                             color="text-primary"
@@ -279,8 +278,16 @@ const SDepartmentScreen = ({ navigation, route }) => {
             </View>
             <View className="flex-1">{content}</View>
             <View>
+                <RequestList
+                    from="department"
+                    requestsModal={requestsModal}
+                    minId={minId}
+                    cUser={currentUser}
+                    setRequestsModal={setRequestsModal}
+                    request={m.request}
+                />
                 <MembersList
-                from="department"
+                    from="department"
                     membersModal={membersModal}
                     minId={minId}
                     cUser={currentUser}
@@ -288,7 +295,7 @@ const SDepartmentScreen = ({ navigation, route }) => {
                     members={m.members}
                 />
                 <AnnouncementsList
-                from="department"
+                    from="department"
                     announcementsModal={announcementsModal}
                     setAnnouncementsModal={setAnnouncementsModal}
                     minId={minId}
@@ -296,7 +303,7 @@ const SDepartmentScreen = ({ navigation, route }) => {
                     announcements={m.announcements}
                 />
                 <CocsList
-                from="department"
+                    from="department"
                     cocsModal={cocsModal}
                     setCocsModal={setCocsModal}
                     minId={minId}
@@ -304,7 +311,7 @@ const SDepartmentScreen = ({ navigation, route }) => {
                     cocs={m.cocs}
                 />
                 <MediaList
-                from="department"
+                    from="department"
                     mediaModal={mediaModal}
                     setMediaModal={setMediaModal}
                     allMedia={allMedia}

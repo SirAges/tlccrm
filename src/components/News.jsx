@@ -3,8 +3,7 @@ import { formatDateAgo } from "../lib/utils";
 import { View, Text, Image, TouchableOpacity, FlatList } from "react-native";
 
 const News = ({ size, title, horizontal, navigation, news }) => {
-    
-if(!news)return<Text>no news</Text>
+    if (!news) return <Text>no news</Text>;
     return (
         <View className="px-2 py-1 mb-1 bg-white">
             <Text className="capitalize font-medium text-title">{title}</Text>
@@ -18,7 +17,7 @@ if(!news)return<Text>no news</Text>
                         <View className={`image ${size} rounded-lg`}>
                             <Image
                                 style={{ resizeMode: "cover" }}
-                                source={{uri:n.image[0]}}
+                                source={{ uri: n.image[0] }}
                                 className="w-full h-full rounded-lg"
                             />
                         </View>
@@ -31,7 +30,7 @@ if(!news)return<Text>no news</Text>
                                 className="text-white font-semibold text-[8px]
                             capitalize"
                             >
-                                {n.createdAt}
+                                {formatDateAgo(n.createdAt)}
                             </Text>
                         </View>
                         <View

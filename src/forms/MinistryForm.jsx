@@ -38,9 +38,8 @@ const MinistryForm = ({ route, navigation }) => {
     const [updating, setUpdating] = useState(false);
     const [errors, setErrors] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
-    const {  title, body } = value;
-    const canCreate =
-        [title,body].every(Boolean) && (!adding || !updating);
+    const { title, body } = value;
+    const canCreate = [title, body].every(Boolean) && (!adding || !updating);
 
     const [
         updateMinistry,
@@ -428,7 +427,7 @@ const MinistryForm = ({ route, navigation }) => {
                     {name}
                 </Text>
             </View>
-            <FormsImageView />
+            <FormsImageView id={"image"} />
         </SafeAreaView>
     );
 };

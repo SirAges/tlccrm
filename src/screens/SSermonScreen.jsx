@@ -141,6 +141,24 @@ const SSermonScreen = ({ route, navigation }) => {
             ]
         );
     };
+    const options = [
+        {
+            name: "edit comment",
+            undo: "edit comment",
+            func: handleEditComment,
+            loader: editting,
+            icon: null,
+            cond: null
+        },
+        {
+            name: "delete comment",
+            undo: "delete comment",
+            func: handleDeleteComment,
+            loader: deletingComment,
+            icon: null,
+            cond: null
+        }
+    ];
     return (
         <View className="flex-1">
             <View className=" image w-full h-72">
@@ -183,14 +201,20 @@ const SSermonScreen = ({ route, navigation }) => {
                 ListHeaderComponent={() => (
                     <>
                         <View className="head space-y-3 px-2">
-                            <Text className="uppercase text-xl font-semibold text-title">
+                            <Text
+                                className="uppercase text-xl font-semibold
+                            text-title text-justify"
+                            >
                                 {f.title}
                             </Text>
                             <View className="flex-row space-x-2">
                                 <Text className="capitalize font-semibold">
                                     Text:
                                 </Text>
-                                <Text className="capitalize text-body">
+                                <Text
+                                    className="capitalize text-body
+                                text-justify"
+                                >
                                     {f.text}
                                 </Text>
                             </View>
@@ -211,7 +235,7 @@ const SSermonScreen = ({ route, navigation }) => {
                                 <Text className="text-title  font-semibold">
                                     Introduction:
                                 </Text>
-                                <Text className="text-body ">
+                                <Text className="text-body text-justify leading-loose">
                                     {f.introduction}
                                 </Text>
                             </View>
@@ -231,15 +255,24 @@ const SSermonScreen = ({ route, navigation }) => {
                                                 <Text className="text-primary font-semibold">
                                                     Point {b.point}
                                                 </Text>
-                                                <Text className="text-title font-semibold capitalize">
+                                                <Text
+                                                    className="text-title
+                                                font-semibold capitalize
+                                                text-justify"
+                                                >
                                                     {b.title}
                                                 </Text>
                                             </View>
-                                            <Text className="capitalize text-body font-semibold ">
-                                                Text: {b.text}
-                                            </Text>
-                                            <Text className="text-body">
-                                                Point {b.body}
+                                            {b.text && (
+                                                <Text className="capitalize text-body font-semibold ">
+                                                    Text: {b.text}
+                                                </Text>
+                                            )}
+                                            <Text
+                                                className="text-body
+                                            text-justify leading-loose"
+                                            >
+                                                {b.body}
                                             </Text>
                                         </View>
                                     ))}
@@ -287,10 +320,10 @@ const SSermonScreen = ({ route, navigation }) => {
             />
             {popup && cid && (
                 <ButtomMenu
-                    deletingComment={deletingComment}
+                    title="comments"
+                    options={options}
                     setPopup={setPopup}
-                    handleEditComment={handleEditComment}
-                    handleDeleteComment={handleDeleteComment}
+                    idx={cid}
                 />
             )}
         </View>

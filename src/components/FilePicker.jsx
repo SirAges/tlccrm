@@ -19,26 +19,27 @@ const FilePicker = ({
     setFile,
     setImageIndex,
     imageIndex,
-    setFormsImageViewModal
+    setFormsImageViewModal,
+    disabled
 }) => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(null);
     const [imageViewModal, setImageViewModal] = useState(false);
 
     const handlePickDocument = async () => {
+     
         try {
             const { assets } = await pickDocument(type, multiple);
             await setFile(prev => [...prev, ...assets]);
-                        setFormsImageViewModal(true);
-
+            setFormsImageViewModal(true);
         } catch (err) {
             console.log("error", err);
         }
     };
     const removeImage = async index => {
-        const newimages = value.image.filter((f, i) => i !== index);
+        const newimages = value[id].filter((f, i) => i !== index);
 
-        setValue(prev => ({ ...prev, image: newimages }));
+        setValue(prev => ({ ...prev, [id]: newimages }));
     };
     const handleImageIcon = async i => {
         setImageIndex(i);
@@ -52,8 +53,13 @@ const FilePicker = ({
         >
             <CusIcon
                 name="images"
-                action={() =>
-                    loading ? null : handlePickDocument(type, multiple)
+                action={
+                    disabled
+                        ? null
+                        : () =>
+                              loading
+                                  ? null
+                                  : handlePickDocument(type, multiple)
                 }
             />
 
@@ -66,8 +72,8 @@ const FilePicker = ({
                     <Text className=" text-2xl text-primary font-bold">
                         Loading Image...
                     </Text>
-                ) : value?.image?.length ? (
-                    value?.image?.map((f, i) => (
+                ) : value[id]?.length ? (
+                    value[id]?.map((f, i) => (
                         <View
                             key={i}
                             className="mx-0.5 w-20 h-20 rounded-md bg-white items-center justify-center"
@@ -114,7 +120,7 @@ const FilePicker = ({
             <ImageViewer
                 imageViewModal={imageViewModal}
                 setImageViewModal={setImageViewModal}
-                images={value.image}
+                images={value[id]}
                 imageIndex={imageIndex}
             />
         </View>

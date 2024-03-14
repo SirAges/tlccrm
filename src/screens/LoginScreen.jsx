@@ -90,7 +90,9 @@ const LoginScreen = ({ navigation, route }) => {
                             {errMsg}
                         </Text>
                         {loginForm.map(l => (
-                            <View className="space-y-2 px-3">
+                            <View
+                            key={l.id}
+                            className="space-y-2 px-3">
                                 <Text className="font-medium text-md capitalize">
                                     {l.label}
                                 </Text>

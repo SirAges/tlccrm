@@ -28,7 +28,7 @@ const TabNavigator = ({ navigation }) => {
                 options={{
                     tabBarLabel: ({ focused }) =>
                         focused ? (
-                            <Text className="capitalize text-icon font-medium">
+                            <Text className="capitalize text-icon font-medium text-primary">
                                 home
                             </Text>
                         ) : null,
@@ -48,7 +48,7 @@ const TabNavigator = ({ navigation }) => {
                 options={{
                     tabBarLabel: ({ focused }) =>
                         focused ? (
-                            <Text className="capitalize text-icon font-medium">
+                            <Text className="capitalize text-icon font-medium text-primary">
                                 sermon
                             </Text>
                         ) : null,
@@ -68,7 +68,7 @@ const TabNavigator = ({ navigation }) => {
                 options={{
                     tabBarLabel: ({ focused }) =>
                         focused ? (
-                            <Text className="capitalize text-icon font-medium">
+                            <Text className="capitalize text-icon font-medium text-primary">
                                 news
                             </Text>
                         ) : null,
@@ -88,7 +88,7 @@ const TabNavigator = ({ navigation }) => {
                 options={{
                     tabBarLabel: ({ focused }) =>
                         focused ? (
-                            <Text className="capitalize text-icon font-medium">
+                            <Text className="capitalize text-icon font-medium text-primary">
                                 testimony
                             </Text>
                         ) : null,
@@ -107,7 +107,7 @@ const TabNavigator = ({ navigation }) => {
                 options={{
                     tabBarLabel: ({ focused }) =>
                         focused ? (
-                            <Text className="capitalize text-icon font-medium">
+                            <Text className="capitalize text-icon font-medium text-primary">
                                 chats
                             </Text>
                         ) : null,

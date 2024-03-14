@@ -38,9 +38,9 @@ const GiveForm = ({ route, navigation }) => {
     const [updating, setUpdating] = useState(false);
     const [errors, setErrors] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
-    const {  amount, purpose, body } = value;
+    const { amount, purpose, body } = value;
     const canCreate =
-        [value.name ,amount, purpose].every(Boolean) && (!adding || !updating);
+        [value.name, amount, purpose].every(Boolean) && (!adding || !updating);
 
     const [
         updateGive,
@@ -428,7 +428,7 @@ const GiveForm = ({ route, navigation }) => {
                     {name}
                 </Text>
             </View>
-            <FormsImageView />
+            <FormsImageView id={"image"} />
         </SafeAreaView>
     );
 };

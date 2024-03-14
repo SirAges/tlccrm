@@ -75,17 +75,15 @@ const SermonForm = ({ route, navigation }) => {
                     return;
                 }
                 const res = await updateSermon(value);
-                console.log("ressermfom", res);
             }
         } catch (error) {
             console.log("error", error);
         } finally {
-            if (!addError && !updateError) {
-                setAdding(false);
-                setUpdating(false);
-                setErrors(false);
-
-                navigation.navigate("SermonScreen");
+            setAdding(false);
+            setUpdating(false);
+            setErrors(false);
+            if (addError === undefined && updateError === undefined) {
+                navigation.goBack();
             }
         }
     };
@@ -105,6 +103,12 @@ const SermonForm = ({ route, navigation }) => {
     };
     const onAddArray = id => {
         handleInputChange(obj, id);
+        setObj({
+            title: "",
+            point: "",
+            text: "",
+            body: ""
+        });
     };
     return (
         <SafeAreaView className="flex-1 bg-white">
@@ -476,7 +480,7 @@ const SermonForm = ({ route, navigation }) => {
                     {name}
                 </Text>
             </View>
-            <FormsImageView />
+            <FormsImageView id={"image"} />
         </SafeAreaView>
     );
 };

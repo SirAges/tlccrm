@@ -25,7 +25,9 @@ import {
     CardActions,
     CusIcon,
     Loader,
-    ScreenLoader,ButtomMenu
+    ScreenLoader,
+    ButtomMenu,
+    
 } from "../components";
 const SDeptFeedScreen = ({ route, navigation }) => {
     const { feed: f } = route.params;
@@ -51,7 +53,10 @@ const SDeptFeedScreen = ({ route, navigation }) => {
         deleteFeed,
         { isSuccess: deleted, isError: deleteIsError, error: deleteError }
     ] = useDeleteDeptFeedMutation();
-    const { data: comments } = useGetDeptCommentsQuery({ minId, feedId: f._id });
+    const { data: comments } = useGetDeptCommentsQuery({
+        minId,
+        feedId: f._id
+    });
     const handleNavigation = () => {
         setFormArray(feedForm);
         setValue({
@@ -151,6 +156,24 @@ const SDeptFeedScreen = ({ route, navigation }) => {
             ]
         );
     };
+    const options = [
+        {
+            name: "edit comment",
+            undo: "edit comment",
+            func: handleEditComment,
+            loader: editting,
+            icon: null,
+            cond: null
+        },
+        {
+            name: "delete comment",
+            undo: "delete comment",
+            func: handleDeleteComment,
+            loader: deletingComment,
+            icon: null,
+            cond: null
+        }
+    ];
     return (
         <View className="bg-background flex-1">
             <View className=" image w-full h-72">
@@ -210,7 +233,8 @@ const SDeptFeedScreen = ({ route, navigation }) => {
                             className="flex-1 bg-white"
                         >
                             <CommentList
-                               from="department" setReplyId={setReplyId}
+                                from="department"
+                                setReplyId={setReplyId}
                                 replyId={replyId}
                                 c={c}
                                 feedId={f._id}
@@ -227,7 +251,7 @@ const SDeptFeedScreen = ({ route, navigation }) => {
                 />
             </View>
             <CommentInput
-            from="department"
+                from="department"
                 setReplyId={setReplyId}
                 replyId={replyId}
                 comReply={comReply}
@@ -246,10 +270,12 @@ const SDeptFeedScreen = ({ route, navigation }) => {
             />
 
             {popup && cid && (
-                <ButtomMenu   deletingComment={deletingComment}
-                setPopup={setPopup}
-    handleEditComment={handleEditComment}
-    handleDeleteComment={handleDeleteComment}/>
+                <ButtomMenu
+                    title="comments"
+                    options={options}
+                    setPopup={setPopup}
+                    idx={cid}
+                />
             )}
         </View>
     );

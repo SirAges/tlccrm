@@ -15,7 +15,8 @@ import {
     AddButton,
     Form,
     ScreenLoader,
-    Loader
+    Loader,
+    ImageGrid
 } from "../components/";
 import { announcementForm } from "../lib/forms";
 import { GlobalContext } from "../hooks/GlobalContext";
@@ -146,13 +147,7 @@ const NewsScreen = ({ navigation }) => {
                             {formatDateAgo(f.createdAt)}
                         </Text>
                     </View>
-                    <View className="w-full h-52">
-                        <Image
-                            className="w-full h-full"
-                            style={{ resizeMode: "cover" }}
-                            source={{ uri: f.image[0] }}
-                        />
-                    </View>
+                   <ImageGrid images={f.image} />
                     <Text className="text-body px-2">
                         {textTruncate(f.body, 100)}
                     </Text>

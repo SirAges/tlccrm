@@ -9,8 +9,42 @@ export const DataProvider = ({ children }) => {
     const { id } = useAuth();
 
     const [formArray, setFormArray] = useState([]);
-    const [currentUser, setCurrentUser] = useState({});
-    const [userId, setUserId] = useState(null);
+    const [currentUser, setCurrentUser] = useState({
+        isVerified: false,
+        dateJoined: "",
+        username: "",
+        password: "",
+        about: "",
+        department: [],
+        ministry: "",
+        image: [],
+        friends: [],
+        hiddens: [],
+        requests: [],
+        cImage: [],
+        roles: [],
+        geolocation: {
+            lat: "",
+            lng: ""
+        },
+        personal: {
+            fullname: "",
+            email: "",
+            phone: "",
+            about: "",
+            country: "",
+            state: "",
+            city: "",
+            address: "",
+            postalCode: "",
+            residentCountry: "",
+            residentState: "",
+            residentCity: "",
+            residentAddress: "",
+            residentPostalCode: ""
+        }
+    });
+    const [cUid, setCUid] = useState(null);
     const [minId, setMinId] = useState(null);
     const [findUser, setFindUser] = useState({});
     const [value, setValue] = useState({});
@@ -20,7 +54,7 @@ export const DataProvider = ({ children }) => {
     const [formsImageViewModal, setFormsImageViewModal] = useState(false);
     const [imageIndex, setImageIndex] = useState(0);
 
-    const { data: users } = useGetUsersQuery("userlist",{
+    const { data: users } = useGetUsersQuery("userlist", {
         pollingInterval: 1000,
         refetchOnFocus: true,
         refetchOnMountOrArgChange: true
@@ -42,6 +76,9 @@ export const DataProvider = ({ children }) => {
 
                     if (res) {
                         setCurrentUser(res);
+                    }
+                    if (id) {
+                        setCUid(id);
                     }
                 }
             } catch (error) {
@@ -97,6 +134,7 @@ export const DataProvider = ({ children }) => {
                 formArray,
                 setFormArray,
                 currentUser,
+                cUid,
                 getReceiver,
                 persist,
                 setPersist,

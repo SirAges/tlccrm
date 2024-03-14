@@ -141,6 +141,24 @@ const SMinFeedScreen = ({ route, navigation }) => {
             ]
         );
     };
+    const options = [
+        {
+            name: "edit comment",
+            undo: "edit comment",
+            func: handleEditComment,
+            loader: editting,
+            icon: null,
+            cond: null
+        },
+        {
+            name: "delete comment",
+            undo: "delete comment",
+            func: handleDeleteComment,
+            loader: deletingComment,
+            icon: null,
+            cond: null
+        }
+    ];
     return (
         <View className="bg-background flex-1">
             <View className=" image w-full h-72">
@@ -238,11 +256,8 @@ const SMinFeedScreen = ({ route, navigation }) => {
 
             {popup && cid && (
                 <ButtomMenu
-                    deletingComment={deletingComment}
-                    setPopup={setPopup}
-                    handleEditComment={handleEditComment}
-                    handleDeleteComment={handleDeleteComment}
-                />
+                title="comments"
+                options={options} setPopup={setPopup} idx={cid} />
             )}
         </View>
     );

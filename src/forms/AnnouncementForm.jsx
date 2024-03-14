@@ -11,7 +11,8 @@ import {
     DatePicker,
     FilePicker,
     Separator,
-    FormsImageView
+    FormsImageView,
+    CusSelect
 } from "../components";
 import {
     useAddNewAnnouncementMutation,
@@ -65,8 +66,8 @@ const AnnouncementForm = ({ route, navigation }) => {
                     setErrorMsg(addError.message);
                     return;
                 }
-               const res= await addNewAnnouncement(value);
-               console.log('anno', res)
+                const res = await addNewAnnouncement(value);
+                console.log("anno", res);
             } else if (action === "edit") {
                 setUpdating(true);
                 if (updateIsError) {
@@ -81,7 +82,7 @@ const AnnouncementForm = ({ route, navigation }) => {
             setAdding(false);
             setUpdating(false);
             setErrors(false);
-            if (!addError||!updateError) {
+            if (addError === undefined && updateError === undefined) {
                 navigation.goBack();
             }
         }
@@ -311,52 +312,14 @@ const AnnouncementForm = ({ route, navigation }) => {
                                         ))}
                                     </View>
                                 ) : f.isSelect ? (
-                                    <View className="relative">
-                                        <Text
-                                            className="h-fit
-                                                        bg-background capitalize
-                                                    font-medium px-2 py-3
-                                                    align-text-top bg-background
-                                                    border border-primary/10
-                                                    rounded-lg"
-                                            onPress={() =>
-                                                setDropdown(prev => !prev)
-                                            }
-                                        >
-                                            {selected}
-                                        </Text>
-                                        {dropdown && (
-                                            <View
-                                                className="absolute
-                                                             z-20 h-24 top-0
-                                                        bg-white shadow-md
-                                                        shadow-black w-52
-                                                        space-y-2 px-2 py-2 align-text-top bg-background border border-primary/10 rounded-lg"
-                                            >
-                                                <ScrollView>
-                                                    {f.isSelect.map(s => (
-                                                        <>
-                                                            <Text
-                                                                onPress={() =>
-                                                                    handleDropdown(
-                                                                        s,
-                                                                        f.id,
-                                                                        f.name
-                                                                    )
-                                                                }
-                                                                className="bg-background
-                                                                            
-                                                       flex-1 my-1          capitalize"
-                                                            >
-                                                                {s}
-                                                            </Text>
-                                                            <Separator />
-                                                        </>
-                                                    ))}
-                                                </ScrollView>
-                                            </View>
-                                        )}
-                                    </View>
+                                    <CusSelect
+                                        id={f.id}
+                                        name={f.name}
+                                        selected={selected}
+                                dropdown={dropdown}        setDropdown={setDropdown}
+                                        selects={f.isSelect}
+                                        handleDropdown={handleDropdown}
+                                    />
                                 ) : (
                                     <TextInput
                                         style={{
@@ -431,7 +394,7 @@ const AnnouncementForm = ({ route, navigation }) => {
                     {name}
                 </Text>
             </View>
-            <FormsImageView />
+            <FormsImageView id={"image"} />
         </SafeAreaView>
     );
 };

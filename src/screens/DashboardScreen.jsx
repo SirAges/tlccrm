@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image, FlatList } from "react-native";
+import { View, Text, ScrollView, Image, FlatList, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { formatDate, formatDateAgo, textTruncate } from "../lib/utils";
 
@@ -12,7 +12,8 @@ import {
     AllFeeds,
     Reactions,
     CardActions,
-    ScreenLoader
+    ScreenLoader,
+    ImageGrid
 } from "../components";
 import {
     useGetNewsQuery,
@@ -74,7 +75,7 @@ const DashboardScreen = ({ navigation }) => {
                     <UpcomingEvents navigation={navigation} />
                     {sermons?.length && (
                         <Sermon
-                            sermons={sermons}
+                            sermons={sermons.slice(0, 10)}
                             title={"recent Live changing sermons"}
                             navigation={navigation}
                             horizontal={true}
@@ -84,7 +85,7 @@ const DashboardScreen = ({ navigation }) => {
                     {testimonies?.length && (
                         <Testimony
                             title={"recent testimonies"}
-                            testimonies={testimonies}
+                            testimonies={testimonies.slice(0, 10)}
                             navigation={navigation}
                             horizontal={true}
                             size={"h-40 w-60"}
@@ -92,7 +93,7 @@ const DashboardScreen = ({ navigation }) => {
                     )}
                     {news?.length && (
                         <News
-                            news={news}
+                            news={news.slice(0, 10)}
                             navigation={navigation}
                             title={"recent news"}
                             horizontal={true}
@@ -104,7 +105,7 @@ const DashboardScreen = ({ navigation }) => {
             keyExtractor={a => a._id}
             data={allFeed}
             renderItem={({ item: a }) => (
-                <View className="mb-1 space-y-2 py-2  bg-white">
+                <View className="mb-1 space-y-2 py-2  bg-white w-full">
                     <View className="head bg-background/20 px-2 py-1 ">
                         <View className="flex-row items-center justify-between">
                             <Text className="font-extrabold text-primary">
@@ -124,13 +125,7 @@ const DashboardScreen = ({ navigation }) => {
                             {textTruncate(a.title, 35)}
                         </Text>
                     </View>
-                    <View className=" w-full h-72 ">
-                        <Image
-                            style={{ resizeMode: "cover" }}
-                            className="h-full w-full relative "
-                            source={{ uri: a.image[0] }}
-                        />
-                    </View>
+                    <ImageGrid images={a.image} />
                     <View className="px-2">
                         <Text className="text-body">
                             {a.text
@@ -147,7 +142,7 @@ const DashboardScreen = ({ navigation }) => {
                                 a.text
                                     ? "sermon"
                                     : a.testifier
-                                    ? "testimonies"
+                                    ? "testimony"
                                     : "news"
                             }
                             navigation={navigation}
@@ -159,14 +154,23 @@ const DashboardScreen = ({ navigation }) => {
         />
     );
 
-    if (!allFeed)
-        content = (
-            <ScreenLoader text="no content try again..." />
-        );
+    if (!allFeed) content = <ScreenLoader text="no content try again..." />;
     if (loading) content = <ScreenLoader text="loading data..." />;
+
+    const func1 = clicked => {
+        Alert.alert(clicked);
+    };
+    const func2 = clicked => {
+        Alert.alert(clicked);
+    };
+    const func3 = clicked => {
+        Alert.alert(clicked);
+    };
+
     return (
         <SafeAreaView className="flex-1 ">
             <Header navigation={navigation} />
+
             <View className="flex-1 bg-gray-500">{content}</View>
         </SafeAreaView>
     );

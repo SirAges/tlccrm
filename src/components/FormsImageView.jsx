@@ -12,7 +12,7 @@ import { useEffect, useState, useContext, useRef } from "react";
 import { CusIcon } from "./";
 import { saveToCloudinary } from "../lib/utils.js";
 import { GlobalContext } from "../hooks/GlobalContext";
-const FormsImageView = () => {
+const FormsImageView = ({ id }) => {
     const {
         file,
         setFile,
@@ -70,15 +70,21 @@ const FormsImageView = () => {
     const removeImage = async index => {
         const newFile = file.filter((f, i) => i !== index);
         setFile(newFile);
+        setLoading(false);
 
         // Delete the image by public ID
     };
     const handleCloseModal = index => {
+        setLoading(false);
         setFile([]);
         // Delete the image by public ID
     };
 
     const handleSetImages = async () => {
+           setValue(prev => ({
+            ...prev,
+            [id]: []
+        }));
         const cloudName = "daxrp4nar";
         const apiKey = "868455186369275";
         const uploadPreset = "tlccrm";
@@ -111,12 +117,12 @@ const FormsImageView = () => {
                 const response = await fetch(apiUrl, options);
                 const data = await response.json();
                 const imageUri = data.secure_url;
-if(imageUri){
-                setValue(prev => ({
-                    ...prev,
-                    image: [...prev.image, imageUri]
-                }));}
-          
+                if (imageUri) {
+                    setValue(prev => ({
+                        ...prev,
+                        [id]: [...prev[id], imageUri]
+                    }));
+                }
             } catch (err) {
                 console.log("error", err);
             } finally {

@@ -25,6 +25,7 @@ const UpcomingEvents = ({ navigation }) => {
               })[0]
             : {};
     return (
+      event&&
         <View className="bg-primary/90 h-fit">
             <View key={event._id} className="justify-center items-center">
                 {event.image && (

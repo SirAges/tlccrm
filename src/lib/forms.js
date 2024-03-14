@@ -1006,16 +1006,38 @@ export const eventForm = [
         multiline: false
     }
 ];
-export const markMyWordForm = [
+export const quoteForm = [
     {
-        id: "title",
+        id: "text",
         name: "",
         focused: false,
-        placeholder: "title",
+        placeholder: "text",
         type: "text",
-        label: "title",
+        label: "text",
         pattern: /^.{3,}$/,
-        error: "title",
+        error: "text",
+        multiline: false
+    },
+    {
+        id: "author",
+        name: "",
+        focused: false,
+        placeholder: "author",
+        type: "text",
+        label: "author",
+        pattern: /^.{3,}$/,
+        error: "author",
+        multiline: false
+    },
+    {
+        id: "body",
+        name: "",
+        focused: false,
+        placeholder: "body",
+        type: "text",
+        label: "body",
+        pattern: /^.{3,}$/,
+        error: "body",
         multiline: false
     },
     {

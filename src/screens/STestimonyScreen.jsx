@@ -25,7 +25,8 @@ import {
     CusIcon,
     Loader,
     ScreenLoader,
-    ButtomMenu
+    ButtomMenu,
+    ImageGrid
 } from "../components";
 const STestimonyScreen = ({ route, navigation }) => {
     const { feed: f } = route.params;
@@ -141,6 +142,24 @@ const STestimonyScreen = ({ route, navigation }) => {
             ]
         );
     };
+    const options = [
+        {
+            name: "edit comment",
+            undo: "edit comment",
+            func: handleEditComment,
+            loader: editting,
+            icon: null,
+            cond: null
+        },
+        {
+            name: "delete comment",
+            undo: "delete comment",
+            func: handleDeleteComment,
+            loader: deletingComment,
+            icon: null,
+            cond: null
+        }
+    ];
     return (
         <View className="flex-1">
             <View className=" image w-full h-72">
@@ -182,46 +201,35 @@ const STestimonyScreen = ({ route, navigation }) => {
             <FlatList
                 ListHeaderComponent={() => (
                     <>
-                        <View className="head space-y-3 px-2">
-                            <Text className="uppercase text-xl font-semibold text-title">
+                        <View className="w-full head space-y-2 px-2">
+                            <Text className="uppercase text-xl font-semibold
+                            text-title flex-1">
                                 {f.title}
                             </Text>
                             <View className="flex-row space-x-2">
-                                <Text className="capitalize font-semibold">
-                                    Text:
+                                <Text
+                                    className="capitalize font-semibold
+                                tracking-wider text-primary"
+                                >
+                                    Testifing:
                                 </Text>
                                 <Text className="capitalize text-body">
-                                    {f.text}
+                                    {f.testifier}
                                 </Text>
                             </View>
                             <View className="flex-row items-center justify-between">
                                 <Text className="text-primary font-medium capitalize">
-                                    {f.program} Message
+                                    {f.program}
                                 </Text>
                                 <Text
                                     className="font-medium text-primary px-2
                                 text-xs"
                                 >
-                                    {formatDateAgo(f.createdAt)}
+                                    {formatDateAgo(f.date)}
                                 </Text>
                             </View>
-                        </View>
-                        <View className="body px-2">
-                            <View>
-                                <Text className="text-title  font-semibold">
-                                    Introduction:
-                                </Text>
-                                <Text className="text-body ">{f.body}</Text>
-                            </View>
-                            <View className="px-2 py-2 space-y-2">
-                                <Text className="capitalize text-title font-semibold">
-                                    we shall consider the message under the
-                                    following subheadings
-                                </Text>
-                                <View className="">
-                                   <Text>{f.body}</Text>
-                                </View>
-                            </View>
+
+                            <Text className="text-body ">{f.body}</Text>
                         </View>
                     </>
                 )}
@@ -264,10 +272,10 @@ const STestimonyScreen = ({ route, navigation }) => {
             />
             {popup && cid && (
                 <ButtomMenu
-                    deletingComment={deletingComment}
+                    title="comments"
+                    options={options}
                     setPopup={setPopup}
-                    handleEditComment={handleEditComment}
-                    handleDeleteComment={handleDeleteComment}
+                    idx={cid}
                 />
             )}
         </View>

@@ -88,6 +88,7 @@ export const apiSlice = createApi({
         "MCoc",
         "MFeed",
         "MMember",
+        "MRequest",
         "MComment",
         "MReaction",
         "DAnnouncement",
@@ -97,6 +98,7 @@ export const apiSlice = createApi({
         "DCoc",
         "DFeed",
         "DMember",
+        "DRequest",
         "DComment",
         "DReaction",
         "NComment",
@@ -104,7 +106,12 @@ export const apiSlice = createApi({
         "SComment",
         "SReaction",
         "TComment",
-        "TReaction"
+        "TReaction",
+        "Quote",
+        "URequest",
+        "UHidden",
+        "UFriend",
+        "UDepartment"
     ],
     endpoints: builder => ({})
 });

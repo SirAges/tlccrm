@@ -1,3 +1,4 @@
+import { APP_EMOJIREACTION } from "@env";
 import { useState, useEffect, useContext } from "react";
 import { View, Text, Alert } from "react-native";
 import { emojiReactions } from "../lib/data";
@@ -29,6 +30,7 @@ import {
 } from "../redux/department/departmentApiSlice";
 import { GlobalContext } from "../hooks/GlobalContext";
 const CardActions = ({ navigation, from, feed }) => {
+    
     const feedId = feed._id;
     const { minId, currentUser } = useContext(GlobalContext);
     const currentUserId = currentUser._id;
@@ -145,7 +147,7 @@ const CardActions = ({ navigation, from, feed }) => {
                                 className="text-2xl px-1"
                                 onPress={() => handleAddReaction(r)}
                             >
-                                {r}
+                            {  r}
                             </Text>
                         ))}
                     </View>
