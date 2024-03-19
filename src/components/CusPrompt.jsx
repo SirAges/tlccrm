@@ -77,8 +77,6 @@ const CusPrompt = ({
             setEditText("intercessory");
         }else if (editKey === "ministry") {
             setEditText("Children Ministry");
-        }else{
-          setEditText("")
         }
     }, []);
 
@@ -214,10 +212,10 @@ const CusPrompt = ({
                             inputMode={"text"}
                         />
                     )}
-                {editKey === "departments"||editKey==="ministry" && (
+                {(editKey === "departments"||editKey==="ministry") && (
                     <CusSelect
-                        id={"departments"}
-                        name={"departments"}
+                        id={editKey}
+                        name={editKey}
                         selected={editText}
                         dropdown={dropdown}
                         setDropdown={setDropdown}

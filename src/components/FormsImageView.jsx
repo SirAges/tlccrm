@@ -12,7 +12,7 @@ import { useEffect, useState, useContext, useRef } from "react";
 import { CusIcon } from "./";
 import { saveToCloudinary } from "../lib/utils.js";
 import { GlobalContext } from "../hooks/GlobalContext";
-const FormsImageView = ({ id }) => {
+const FormsImageView = ({ id, multiple }) => {
     const {
         file,
         setFile,
@@ -81,10 +81,11 @@ const FormsImageView = ({ id }) => {
     };
 
     const handleSetImages = async () => {
-           setValue(prev => ({
-            ...prev,
-            [id]: []
-        }));
+        multiple ?
+            setValue(prev => ({
+                ...prev,
+                [id]: []
+            })):null
         const cloudName = "daxrp4nar";
         const apiKey = "868455186369275";
         const uploadPreset = "tlccrm";

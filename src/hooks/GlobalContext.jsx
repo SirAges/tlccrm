@@ -15,7 +15,7 @@ export const DataProvider = ({ children }) => {
         username: "",
         password: "",
         about: "",
-        department: [],
+        departments: [],
         ministry: "",
         image: [],
         friends: [],
@@ -52,6 +52,8 @@ export const DataProvider = ({ children }) => {
     const [obj, setObj] = useState({});
     const [persist, setPersist] = useState(false);
     const [formsImageViewModal, setFormsImageViewModal] = useState(false);
+     const [imageViewModal, setImageViewModal] = useState(false);
+    const [viewImages, setViewImages] = useState([]);
     const [imageIndex, setImageIndex] = useState(0);
 
     const { data: users } = useGetUsersQuery("userlist", {
@@ -72,7 +74,7 @@ export const DataProvider = ({ children }) => {
         const getCUser = async () => {
             try {
                 if (id) {
-                    const res = await users.find(u => u._id === id);
+                    const res = await users?.find(u => u._id === id);
 
                     if (res) {
                         setCurrentUser(res);
@@ -142,11 +144,12 @@ export const DataProvider = ({ children }) => {
                 setFile,
                 formsImageViewModal,
                 setFormsImageViewModal,
+                viewImages, setViewImages,imageViewModal, setImageViewModal,
                 imageIndex,
                 setImageIndex,
                 minId,
                 setMinId,
-                getUser
+                getUser,users
             }}
         >
             {children}

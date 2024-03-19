@@ -2,13 +2,61 @@ import { createSelector, createEntityAdapter } from "@reduxjs/toolkit";
 import { apiSlice } from "../../app/api/apiSlice";
 
 const userchatsAdapter = createEntityAdapter({
-    sortComparer: (a, b) => b.createdAt - a.createdAt
+    sortComparer: (a, b) => a.createdAt - b.createdAt
 });
 
 const initialState = userchatsAdapter.getInitialState();
 
 export const userchatsApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
+        getChatMessages: builder.query({
+            query: userchatId => ({
+                url: `/userchats/${userchatId}/messages`,
+                validateStatus: (response, result) => {
+                    return response.status === 200 && !result.isError;
+                }
+            }),
+
+            providesTags: (result, error, arg) => {
+                if (result?.ids) {
+                    return [
+                        { type: "UCMessage", id: "LIST" },
+                        ...result.ids.map(id => ({ type: "UCMessage", id }))
+                    ];
+                } else return [{ type: "UCMessage", id: "LIST" }];
+            }
+        }),
+        addNewChatMessage: builder.mutation({
+            query: ({ userchatId, ...value }) => ({
+                url: `/userchats/${userchatId}/messages`,
+                method: "POST",
+                body: value,
+                responseHandler: "text"
+            }),
+            invalidatesTags: [{ type: "UCMessage", id: "LIST" }]
+        }),
+        updateChatMessage: builder.mutation({
+            query: ({ userchatId, value }) => ({
+                url: `/userchats/${userchatId}/messages/${value._id}`,
+                method: "PATCH",
+                body: value,
+                responseHandler: "text"
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "UCMessage", id: arg.id }
+            ]
+        }),
+        deleteChatMessage: builder.mutation({
+            query: ({ chatId, messageId }) => ({
+                url: `/userchats/${chatId}/messages/${messageId}`,
+                method: "DELETE",
+                responseHandler: "text"
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "UCMessage", id: arg.id }
+            ]
+        }),
+
         getUserchats: builder.query({
             query: () => ({
                 url: "/userchats",
@@ -37,7 +85,7 @@ export const userchatsApiSlice = apiSlice.injectEndpoints({
         }),
         updateUserchat: builder.mutation({
             query: value => ({
-                url: "/userchats/" + value._id,
+                url: `/userchats/${value._id}`,
                 method: "PATCH",
                 body: value,
                 responseHandler: "text"
@@ -47,8 +95,8 @@ export const userchatsApiSlice = apiSlice.injectEndpoints({
             ]
         }),
         deleteUserchat: builder.mutation({
-            query: id => ({
-                url: "/userchats/" + id,
+            query: userchatId => ({
+                url: `/userchats/${userchatId}`,
                 method: "DELETE",
                 responseHandler: "text"
             }),
@@ -60,6 +108,10 @@ export const userchatsApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
+    useGetChatMessagesQuery,
+    useAddNewChatMessageMutation,
+    useUpdateChatMessageMutation,
+    useDeleteChatMessageMutation,
     useGetUserchatsQuery,
     useAddNewUserchatMutation,
     useUpdateUserchatMutation,

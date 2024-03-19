@@ -8,7 +8,7 @@ const Reactions = ({ reactions }) => {
     useEffect(() => {
         const updateReactions = () => {
             const updatedReactions = reactions?.reduce((acc, r) => {
-                const exist = acc.find(o => o.name === r.reaction);
+                const exist = acc?.find(o => o.name === r.reaction);
                 if (exist) {
                     exist.total += 1;
                 } else {

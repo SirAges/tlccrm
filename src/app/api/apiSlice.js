@@ -111,7 +111,9 @@ export const apiSlice = createApi({
         "URequest",
         "UHidden",
         "UFriend",
-        "UDepartment"
+        "UDepartment",
+        "Userchat",
+        "UCMessage",
     ],
     endpoints: builder => ({})
 });

@@ -19,6 +19,8 @@ const ButtomMenu = ({ title, setPopup, idx, options }) => {
 
         return () => backHandler.remove();
     }, []);
+    
+  
     return (
         <TouchableWithoutFeedback onPress={() => setPopup(false)}>
             <View className="absolute bottom-0 h-full w-full bg-red-500 bg-transparent">
@@ -33,6 +35,7 @@ const ButtomMenu = ({ title, setPopup, idx, options }) => {
                     <ScrollView className="w-full">
                         {options.map(o => (
                             <TouchableWithoutFeedback
+                            key={o.name}
                                 onPress={() => o.func(idx)}
                             >
                                 <View className="flex-row items-center mb-3">

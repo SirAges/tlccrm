@@ -413,8 +413,10 @@ const GiveScreen = ({ navigation }) => {
             ))}
         </View>
     );
-    if (isError || error?.data)
-        content = <ScreenLoader refresh={refresh} text="no content try again..." />;
+     if ((!loading && !allBankAccounts.length) || isError || error?.data)
+        content = (
+            <ScreenLoader refresh={refresh} text="no content try again..." />
+        );
     if (loading || isLoading) content = <ScreenLoader text="loading data..." />;
     return (
         <SafeAreaView className="bg-white flex-1">

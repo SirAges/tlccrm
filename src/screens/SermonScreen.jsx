@@ -43,8 +43,9 @@ const SermonScreen = ({ navigation, route }) => {
     ] = useDeleteSermonMutation();
 
     useEffect(() => {
+
         try {
-            setLoading(true);
+                  setLoading(true);
 
             if (sermons && sermons !== undefined) {
                 setAllSermons(sermons);

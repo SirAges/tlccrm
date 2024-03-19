@@ -44,12 +44,12 @@ const NewsScreen = ({ navigation }) => {
     ] = useDeleteNewsMutation();
 
     useEffect(() => {
+      setLoading(true);
         try {
-            setLoading(true);
+            
 
             if (news && news !== undefined) {
                 setAllNews(news);
-                console.log("news", news);
             }
         } catch (error) {
             console.log("error", error);
@@ -147,7 +147,7 @@ const NewsScreen = ({ navigation }) => {
                             {formatDateAgo(f.createdAt)}
                         </Text>
                     </View>
-                   <ImageGrid images={f.image} />
+                    <ImageGrid images={f.image} />
                     <Text className="text-body px-2">
                         {textTruncate(f.body, 100)}
                     </Text>
@@ -163,11 +163,7 @@ const NewsScreen = ({ navigation }) => {
             )}
         />
     );
-    if (isError || error?.data)
-        content = (
-            <ScreenLoader refresh={refresh} text="error occured try again..." />
-        );
-    if (!news?.length)
+    if ((!loading && !allNews?.length) || isError || error?.data)
         content = (
             <ScreenLoader refresh={refresh} text="no content try again..." />
         );

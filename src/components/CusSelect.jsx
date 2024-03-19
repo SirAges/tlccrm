@@ -38,7 +38,7 @@ const CusSelect = ({
                 >
                     <ScrollView>
                         {selects.map(s => (
-                            <>
+                            <View key={s}>
                                 <Text
                                     onPress={() => handleDropdown(s, id, name)}
                                     className="bg-background
@@ -48,7 +48,7 @@ const CusSelect = ({
                                     {s}
                                 </Text>
                                 <Separator />
-                            </>
+                            </View>
                         ))}
                     </ScrollView>
                 </View>

@@ -175,8 +175,10 @@ const QuoteScreen = ({ navigation }) => {
                     >
                         <View className=" bg-primary w-[2%] rounded-l-md h-full min-h-[70px]" />
                         <View className="flex-1">
-                            <View className="flex-row items-center
-                            justify-between px-2">
+                            <View
+                                className="flex-row items-center
+                            justify-between px-2"
+                            >
                                 <View className="flex-row items-center space-x-2">
                                     <Text className="capitalize text-primary  font-semibold">
                                         Author
@@ -185,8 +187,10 @@ const QuoteScreen = ({ navigation }) => {
                                         {a.author}
                                     </Text>
                                 </View>
-                                <View className="flex flex-row space-x-2
-                                items-center">
+                                <View
+                                    className="flex flex-row space-x-2
+                                items-center"
+                                >
                                     <CusIcon
                                         action={() => handleEdit(a)}
                                         size={20}
@@ -244,7 +248,7 @@ const QuoteScreen = ({ navigation }) => {
             )}
         />
     );
-    if (isError || error?.data)
+    if ((!loading && !allQuotes.length) || isError || error?.data)
         content = (
             <ScreenLoader refresh={refresh} text="no content try again..." />
         );

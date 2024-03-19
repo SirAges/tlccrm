@@ -1,13 +1,7 @@
-import {
-    View,
-    Text,
-    Image,
-    FlatList,
-    Modal,
-    BackHandler,
-    Dimensions
-} from "react-native";
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { FlatList, Modal, BackHandler, Dimensions, View } from "react-native";
+
+import { ImageCard } from "./";
 
 const ImageViewer = ({
     imageViewModal,
@@ -18,15 +12,14 @@ const ImageViewer = ({
     const flatListRef = useRef();
     const windowWidth = Dimensions.get("window").width;
     const windowHeight = Dimensions.get("window").height;
-    const [viewPosition, setviewPosition] = useState(0);
 
     useEffect(() => {
         const backAction = () => {
             if (imageViewModal) {
                 setImageViewModal(false);
-                return true; // Prevent default behavior (exit the app)
+                return true;
             }
-            return false; // Default behavior (exit the app)
+            return false;
         };
 
         const backHandler = BackHandler.addEventListener(
@@ -34,8 +27,16 @@ const ImageViewer = ({
             backAction
         );
 
-        return () => backHandler.remove(); // Cleanup the event listener on component unmount
-    }, [setImageViewModal]);
+        return () => backHandler.remove();
+    }, [imageViewModal, setImageViewModal]);
+
+    useEffect(() => {
+        flatListRef.current?.scrollToIndex({
+            index: imageIndex,
+            animated: false
+        });
+    }, [imageIndex]);
+
     useEffect(() => {
         flatListRef.current?.scrollToIndex({
             index: imageIndex,
@@ -54,7 +55,7 @@ const ImageViewer = ({
             <View className="flex-1">
                 <FlatList
                     className="flex-1 bg-black"
-                    keyExtractor={d => d}
+                    keyExtractor={(item, index) => index.toString()}
                     ref={flatListRef}
                     bounce={false}
                     pagingEnabled
@@ -66,21 +67,11 @@ const ImageViewer = ({
                         offset: windowWidth * index,
                         index
                     })}
-                    renderItem={({ item: d }) => (
-                        <View
-                            className=" h-full w-screen justify-center items-center
-                        "
-                        >
-                            <Image
-                                className="w-full h-full"
-                                style={{ resizeMode: "center" }}
-                                source={{ uri: d }}
-                            />
-                        </View>
-                    )}
+                    renderItem={({ item: uri }) => <ImageCard url={uri} />}
                 />
             </View>
         </Modal>
     );
 };
+
 export default ImageViewer;

@@ -9,7 +9,6 @@ import {
     Sermon,
     News,
     UpcomingEvents,
-    AllFeeds,
     Reactions,
     CardActions,
     ScreenLoader,
@@ -33,21 +32,22 @@ const DashboardScreen = ({ navigation }) => {
     const { data: testimonies } = useGetTestimoniesQuery("testimonylist");
     const [allFeed, setAllFeed] = useState([]);
     const [loading, setLoading] = useState(false);
-    useEffect(() => {}, []);
+    const canLoad =
+        news?.length &&
+        sermons?.length &&
+        testimonies?.length &&
+        news !== undefined &&
+        sermons !== undefined &&
+        testimonies !== undefined;
     useEffect(() => {
         const getAllFeed = () => {
-            setLoading(true);
             try {
-                const mergedFeeds = news &&
-                    sermons &&
-                    testimonies &&
-                    news !== undefined &&
-                    sermons !== undefined &&
-                    testimonies !== undefined && [
-                        ...testimonies,
-                        ...news,
-                        ...sermons
-                    ];
+                setLoading(true);
+                const mergedFeeds = canLoad && [
+                    ...testimonies,
+                    ...news,
+                    ...sermons
+                ];
 
                 const sortedFeed =
                     mergedFeeds?.length &&
@@ -60,11 +60,13 @@ const DashboardScreen = ({ navigation }) => {
             } catch (error) {
                 throw new Error(error);
             } finally {
-                setLoading(false);
+                              setLoading(false);
+
             }
         };
 
         getAllFeed();
+        return () => false;
     }, [news, sermons, testimonies]);
 
     let content;
@@ -154,18 +156,10 @@ const DashboardScreen = ({ navigation }) => {
         />
     );
 
-    if (!allFeed) content = <ScreenLoader text="no content try again..." />;
-    if (loading) content = <ScreenLoader text="loading data..." />;
-
-    const func1 = clicked => {
-        Alert.alert(clicked);
-    };
-    const func2 = clicked => {
-        Alert.alert(clicked);
-    };
-    const func3 = clicked => {
-        Alert.alert(clicked);
-    };
+    if (!canLoad) {
+        content = <ScreenLoader/>;
+    }
+  
 
     return (
         <SafeAreaView className="flex-1 ">

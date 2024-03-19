@@ -209,7 +209,7 @@ const DoctrineScreen = ({ navigation }) => {
             )}
         />
     );
-    if (isError || error?.data)
+    if ((!loading && !allDoctrines.length) || isError || error?.data)
         content = (
             <ScreenLoader refresh={refresh} text="no content try again..." />
         );

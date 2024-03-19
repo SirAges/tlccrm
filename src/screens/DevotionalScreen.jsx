@@ -223,8 +223,10 @@ const DevotionalScreen = ({ navigation }) => {
         />
     );
 
-    if (isError || error?.data)
-        content = <ScreenLoader refresh={refresh} text="no content try again..." />;
+     if ((!loading && !allDevotions.length) || isError || error?.data)
+        content = (
+            <ScreenLoader refresh={refresh} text="no content try again..." />
+        );
     if (loading || isLoading) content = <ScreenLoader text="loading data..." />;
     return (
         <SafeAreaView className=" flex-1 bg-white">

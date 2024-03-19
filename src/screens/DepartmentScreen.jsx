@@ -159,7 +159,7 @@ const DepartmentScreen = ({ navigation }) => {
         />
     );
 
-    if (isError || error?.data)
+    if ((!loading && !allDepartments.length) || isError || error?.data)
         content = (
             <ScreenLoader refresh={refresh} text="no content try again..." />
         );

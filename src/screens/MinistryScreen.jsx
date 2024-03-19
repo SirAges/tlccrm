@@ -161,7 +161,7 @@ const MinistryScreen = ({ navigation }) => {
         />
     );
 
-    if (isError || error?.data)
+   if ((!loading && !allMinistries.length) || isError || error?.data)
         content = (
             <ScreenLoader refresh={refresh} text="no content try again..." />
         );

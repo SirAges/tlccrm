@@ -21,7 +21,7 @@ import {
     CardActions
 } from "../components";
 
-const UserCard = ({ minId, userId, handleOptions }) => {
+const UserCard = ({ userId, handleOptions}) => {
     const { getUser } = useContext(GlobalContext);
     let content;
 

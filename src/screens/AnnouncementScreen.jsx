@@ -37,11 +37,7 @@ const AnnouncementScreen = ({ navigation }) => {
         isError,
         error,
         refetch
-    } = useGetAnnouncementsQuery("announcementslist", {
-        // pollingInterval: 15000,
-        refetchOnFocus: true,
-        refetchOnMountOrArgChange: true
-    });
+    } = useGetAnnouncementsQuery("announcementslist",);
 
     const [
         deleteAnnouncement,
@@ -258,8 +254,10 @@ const AnnouncementScreen = ({ navigation }) => {
             )}
         />
     );
-    if (isError || error?.data)
-        content = <ScreenLoader refresh={refresh}text="no content try again..." />;
+    if ((!loading && !allAnnouncements.length) || isError || error?.data)
+        content = (
+            <ScreenLoader refresh={refresh} text="no content try again..." />
+        );
     if (loading || isLoading) content = <ScreenLoader text="loading data..." />;
     return (
         <SafeAreaView className="bg-white flex-1">

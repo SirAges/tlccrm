@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler'
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import { Text, View } from "react-native";
 import { Provider } from "react-redux";

@@ -284,9 +284,11 @@ const GiveListScreen = ({ navigation }) => {
             )}
         />
     );
-    if (isError || error?.data){
-        content = <ScreenLoader refresh={refresh} text="no content try again..." />;}
-    if (loading || isLoading) {content = <ScreenLoader text="loading data..." />;}
+     if ((!loading && !allGives.length) || isError || error?.data)
+        content = (
+            <ScreenLoader refresh={refresh} text="no content try again..." />
+        );
+    if (loading || isLoading) content = <ScreenLoader text="loading data..." />;
     return (
         <SafeAreaView className="bg-white flex-1">
             <Text className="uppercase text-2xl text-primary font-extrabold p-2  text-center">

@@ -13,7 +13,7 @@ const FilePicker = ({
     type,
     handleInputChange,
     multiple,
-    name,
+  
     value,
     setValue,
     setFile,

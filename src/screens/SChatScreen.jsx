@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 
 import {
     View,
@@ -9,11 +9,22 @@ import {
     TouchableWithoutFeedback,
     Video,
     Modal,
-    BackHandler
+    BackHandler,
+    Alert
 } from "react-native";
 import * as ScreenOrientation from "expo-screen-orientation";
-import { usersChat } from "../lib/data";
-("");
+import Swipeout from "react-native-swipeout";
+
+import { Swipeable } from "react-native-gesture-handler";
+
+import {
+    useGetUserchatsQuery,
+    useAddNewUserchatMutation,
+    useGetChatMessagesQuery,
+    useAddNewChatMessageMutation,
+    useUpdateChatMessageMutation,
+    useDeleteChatMessageMutation
+} from "../redux/userchat/userchatApiSlice.js";
 import {
     CusIcon,
     VideoPlayer,
@@ -24,14 +35,52 @@ import {
     DocMsg,
     ContactMsg,
     ReplyMsg,
-    Messanger
+    Messanger,
+    ScreenLoader,
+    Loader,
+    Separator,
+    SwipeableItem
 } from "../components";
 ("");
-import { getUser, AudioRecorder, processText } from "../lib/utils";
+import { AudioRecorder, processText } from "../lib/utils";
 import { GlobalContext } from "../hooks/GlobalContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 const SChatScreen = ({ route, navigation }) => {
-    const { currentUser, getReceiver } = useContext(GlobalContext);
+    const { currentUser, getUser, value, setValue } = useContext(GlobalContext);
+    const senderId = currentUser._id;
+    const { receiverId: hisId, chatId: ids } = route.params;
+
+    const splitIds = ids && ids.split("-");
+
+    const receiverId = hisId
+        ? hisId
+        : splitIds[0] === currentUser._id
+        ? splitIds[1]
+        : splitIds[0];
+
+    const hd = getUser(receiverId);
+
+    const chatId = ids
+        ? ids
+        : senderId > receiverId
+        ? `${receiverId}-${senderId}`
+        : `${senderId}-${receiverId}`;
+
+    const { data: chats } = useGetUserchatsQuery();
+    const {
+        data: messages,
+        isLoading,
+        isSuccess,
+        isError,
+        error,
+        refetch
+    } = useGetChatMessagesQuery(chatId);
+    const [deleteChatMessage] = useDeleteChatMessageMutation();
+
+    const [updateChatMessage] = useUpdateChatMessageMutation();
+    const [addNewChatMessage] = useAddNewChatMessageMutation();
+    const [addNewUserChat] = useAddNewUserchatMutation();
+
     const {
         recording,
         startRecording,
@@ -39,24 +88,148 @@ const SChatScreen = ({ route, navigation }) => {
         downloadAndPlay,
         downloadAndSave
     } = () => AudioRecorder();
-    const { chat } = route.params;
-    const [chats, setChats] = useState({});
-    const hd = getReceiver(chat.chatId);
+    const flatListRef = useRef(null);
     const [curAction, setCurAction] = useState("typing");
+    const [message, setMessage] = useState("");
+    const documents = value.documents || [];
+    const [allMessages, setAllMessages] = useState([]);
+    const [allChats, setAllChats] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [idx, setIdx] = useState(null);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const [updating, setUpdating] = useState(false);
+    const [adding, setAdding] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const [menu, setMenu] = useState(false);
-    const [replyId, setReplyId] = useState("");
+    const [replyId, setReplyId] = useState(null);
     const [videoModal, setVideoModal] = useState(false);
     const handleMenu = () => {
         setMenu(prev => !prev);
     };
+    const chatExist =
+        chats &&
+        chats !== undefined &&
+        allChats?.find(c => c.chatId === chatId);
+
+    useEffect(() => {
+        const getMyMessages = () => {
+            setLoading(true);
+            try {
+                if (messages && messages !== undefined) {
+                    setAllMessages(messages);
+                }
+            } catch (error) {
+                console.log("error", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        getMyMessages();
+    }, [messages]);
+    useEffect(() => {
+        const getMyChats = () => {
+            setLoading(true);
+            try {
+                if (chats && chats !== undefined) {
+                    const myChats = chats.filter(c => {
+                        const ids = c.chatId.split("-");
+                        return ids?.includes(currentUser._id);
+                    });
+
+                    setAllChats(myChats);
+                }
+            } catch (error) {
+                console.log("error", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        getMyChats();
+    }, [chats]);
+
+    const refresh = async () => {
+        setIsRefreshing(true);
+        setLoading(true);
+
+        try {
+            await refetch();
+        } catch (error) {
+            console.log("error", error);
+        } finally {
+            setLoading(false);
+            setIsRefreshing(false);
+        }
+    };
+    const deleteMessage = async clicked => {
+        setDeleting(true);
+        try {
+            const res = await deleteChatMessage({ chatId, messageId: clicked });
+            console.log("resdel", res);
+        } catch (error) {
+            console.log("error", error);
+        } finally {
+            setDeleting(false);
+        }
+    };
+    const updateMessage = async clicked => {
+        setDeleting(true);
+        try {
+            const res = await deleteUserChat(clicked);
+        } catch (error) {
+            console.log("error", error);
+        } finally {
+            setDeleting(false);
+        }
+    };
+    const sendMessage = async clicked => {
+        setAdding(true);
+        const mymessage = {
+            senderId,
+            receiverId,
+            message,
+            documents,
+            replyId
+        };
+
+        try {
+            if (chatExist && chatExist !== undefined) {
+                const res = await addNewChatMessage({
+                    userchatId: chatId,
+                    value: mymessage
+                });
+                console.log("oldchat", res);
+                return;
+            } else {
+                const res = await addNewUserChat({
+                    chatId,
+                    value: message
+                });
+                console.log("newchat", res);
+
+                return;
+            }
+        } catch (error) {
+            console.log("error", error);
+        } finally {
+            setAdding(false);
+            setMessage("");
+            setValue(prev => ({ ...prev, documents: [] }));
+            setReplyId(null);
+            // flatListRef.current.scrollToEnd({ animated: true });
+        }
+    };
+
     const handleReplyMessage = replyId => {
-        const messageReplied = chat.messages.find(m => m._id === replyId);
-        const message = messageReplied.message;
-        const username =
-            messageReplied.senderId === currentUser._id
-                ? "You"
-                : getUser(messageReplied.senderId).username;
-        return [username, message];
+        if (replyId) {
+            const messageReplied = allMessages?.find(m => m?._id === replyId);
+            const message = messageReplied?.message;
+            const username =
+                messageReplied?.senderId === currentUser._id
+                    ? "You"
+                    : getUser(messageReplied?.senderId, "username");
+            return [username, message];
+        }
     };
 
     const handleIsTyping = () => {
@@ -72,24 +245,177 @@ const SChatScreen = ({ route, navigation }) => {
         // Check if the device supports the 'tel' scheme
         Linking.openURL(dialUrl);
 
-        // Open the phone dialer
-        //     try {
-        //       const supported = await Linking.canOpenURL(dialUrl);
-        //       if (supported)
-        //       {
+        // try {
+        //     const supported = await Linking.canOpenURL(dialUrl);
+        //     if (supported) {
         //         Linking.openURL(dialUrl);
-        //   } else {
-        //     throw new Error(supported);
-        // }
-
-        //     } catch (err) {
-        //         console.error("not supported" + err);
+        //     } else {
+        //         throw new Error(supported);
         //     }
+        // } catch (err) {
+        //     console.error("not supported" + err);
+        // }
     };
+    const handleSwiper = swiped => {
+        setReplyId(null);
+        setIdx(swiped);
+    };
+    let content;
+    content = (
+        <FlatList
+            ref={flatListRef}
+            className="px-3"
+            keyExtractor={m => m?._id}
+            refreshing={isRefreshing}
+            onRefresh={refresh}
+            onContentSizeChange={() => flatListRef.current.scrollToEnd()}
+            data={allMessages}
+            renderItem={({ item: m }) =>
+                m ? (
+                    <View
+                        className={`${
+                            m?.senderId === currentUser._id
+                                ? "items-end"
+                                : " items-start"
+                        }   
+                                         mt-2
+                              justify-center`}
+                    >
+                        <View className="w-[60%]">
+                            <SwipeableItem
+                                gestureEnabled={idx !== m._id}
+                                onSwipeLeft={() => deleteMessage(m._id)}
+                                onSwipeRight={() => setReplyId(m._id)}
+                            >
+                                <View className="rounded-md justify-center bg-background ">
+                                    <View>
+                                        {m?.replyId ? (
+                                            <ReplyMsg
+                                                sender={m?.senderId}
+                                                currentUser={currentUser._id}
+                                                message={
+                                                    handleReplyMessage(
+                                                        m?.replyId
+                                                    )[1]
+                                                }
+                                                username={
+                                                    handleReplyMessage(
+                                                        m?.replyId
+                                                    )[0]
+                                                }
+                                            />
+                                        ) : null}
+                                        <View
+                                            className="flex-row
+                      items-center space-x-1"
+                                        >
+                                            {m?.receiverId ===
+                                                currentUser._id &&
+                                            !m?.documents[0]?.includes(
+                                                "image"
+                                            ) ? (
+                                                <View
+                                                    className="w-10 h-10
+                                                rounded-full border
+                                                border-primary m-1 p-0.5 "
+                                                >
+                                                    <TouchableWithoutFeedback
+                                                        onPress={() =>
+                                                            navigation.navigate(
+                                                                "ProfileScreen",
+                                                                {
+                                                                    userId: hd?._id
+                                                                }
+                                                            )
+                                                        }
+                                                    >
+                                                        <Image
+                                                            style={{
+                                                                resizeMode:
+                                                                    "cover"
+                                                            }}
+                                                            className="w-full h-full rounded-full"
+                                                            source={{
+                                                                uri: hd
+                                                                    ?.image[0]
+                                                            }}
+                                                        />
+                                                    </TouchableWithoutFeedback>
+                                                </View>
+                                            ) : null}
 
+                                            {m?.documents[0]?.includes(
+                                                "image"
+                                            ) ? (
+                                                <ImageMsg
+                                                    CusIcon={CusIcon}
+                                                    documents={m?.documents}
+                                                    message={m?.message}
+                                                />
+                                            ) : m?.documents[0]?.includes(
+                                                  "audio"
+                                              ) ? (
+                                                <AudioMsg
+                                                    documents={m?.documents}
+                                                    CusIcon={CusIcon}
+                                                    message={m?.message}
+                                                />
+                                            ) : m?.documents[0]?.includes(
+                                                  "video"
+                                              ) ? (
+                                                <VideoMsg
+                                                    documents={m?.documents}
+                                                    CusIcon={CusIcon}
+                                                    message={m?.message}
+                                                />
+                                            ) : m?.documents[0]?.includes(
+                                                  "doc"
+                                              ) ? (
+                                                <DocMsg
+                                                    documents={m?.documents}
+                                                    CusIcon={CusIcon}
+                                                    processText={processText}
+                                                    message={m?.message}
+                                                />
+                                            ) : m?.documents[0]?.includes(
+                                                  "contact"
+                                              ) ? (
+                                                <ContactMsg
+                                                    documents={m?.documents}
+                                                    CusIcon={CusIcon}
+                                                    handleDialPress={
+                                                        handleDialPress
+                                                    }
+                                                    processText={processText}
+                                                    handleContact={
+                                                        handleContact
+                                                    }
+                                                    message={m?.message}
+                                                />
+                                            ) : (
+                                                <NormalMsg
+                                                    CusIcon={CusIcon}
+                                                    message={m?.message}
+                                                />
+                                            )}
+                                        </View>
+                                    </View>
+                                </View>
+                            </SwipeableItem>
+                        </View>
+                    </View>
+                ) : null
+            }
+        />
+    );
+    if (!loading && !allMessages?.length)
+        content = (
+            <ScreenLoader refresh={refresh} text="no content try again..." />
+        );
+    if (loading || isLoading) content = <ScreenLoader text="loading data..." />;
     return (
-        <SafeAreaView className="flex-1 bg-white">
-            <View className="flex-1 bg-green-950">
+        <SafeAreaView className="flex-1  bg-background">
+            <View className="bg-primary flex-1">
                 <View
                     className="px-2 py-1 rounded-b-md flex-row items-center
                 justify-between space-x-2  bg-background"
@@ -98,28 +424,28 @@ const SChatScreen = ({ route, navigation }) => {
                         <TouchableWithoutFeedback
                             onPress={() =>
                                 navigation.navigate("ProfileScreen", {
-                                    userId: hd._id
+                                    userId: hd?._id
                                 })
                             }
                         >
                             <Image
                                 style={{ resizeMode: "cover" }}
                                 className="w-full h-full rounded-full"
-                                source={hd.image}
+                                source={{ uri: hd?.image[0] }}
                             />
                         </TouchableWithoutFeedback>
                     </View>
                     <View className="flex-1">
                         <Text className="capitalize font-semibold text-md text-primary">
-                            {hd.username}
+                            {hd?.username}
                         </Text>
 
-                        {handleIsTyping().length && (
+                        {handleIsTyping()?.length && (
                             <Text>{handleIsTyping()}</Text>
                         )}
                     </View>
                     <CusIcon
-                        action={() => handleDialPress(hd.personal.phone)}
+                        action={() => handleDialPress(hd?.personal.phone)}
                         name="call"
                     />
 
@@ -156,165 +482,22 @@ const SChatScreen = ({ route, navigation }) => {
                         </View>
                     </View>
                 ) : null}
-                <View className="flex-1 px-2 py-2 ">
-                    <FlatList
-                        keyExtractor={m => m._id}
-                        data={chat.messages}
-                        renderItem={({ item: m }) =>
-                            m ? (
-                                <TouchableWithoutFeedback
-                                    onLongPress={() => setReplyId(m._id)}
-                                >
-                                    <View
-                                        className={`${
-                                            m.senderId === currentUser._id
-                                                ? "items-end"
-                                                : "items-start"
-                                        } py-2`}
-                                    >
-                                        <View
-                                            className={`${
-                                                m.senderId === currentUser._id
-                                                    ? "rounded-tr-md "
-                                                    : "rounded-tl-md "
-                                            }  bg-background 
-                                        rounded-b-md w-[60%]
-                              justify-center          min-h-[50px]`}
-                                        >
-                                            {m.replyId.length ? (
-                                                <ReplyMsg
-                                                    sender={m.senderId}
-                                                    currentUser={
-                                                        currentUser._id
-                                                    }
-                                                    message={
-                                                        handleReplyMessage(
-                                                            m.replyId
-                                                        )[1]
-                                                    }
-                                                    username={
-                                                        handleReplyMessage(
-                                                            m.replyId
-                                                        )[0]
-                                                    }
-                                                />
-                                            ) : null}
-                                            <View
-                                                className="flex-row
-                      items-start space-x-1 px-2 py-1 flex-1"
-                                            >
-                                                {m.receiverId ===
-                                                currentUser._id ? (
-                                                    <View className="w-10 h-10 rounded-full border  border-primary p-0.5 ">
-                                                        <TouchableWithoutFeedback
-                                                            onPress={() =>
-                                                                navigation.navigate(
-                                                                    "ProfileScreen",
-                                                                    {
-                                                                        userId: hd._id
-                                                                    }
-                                                                )
-                                                            }
-                                                        >
-                                                            <Image
-                                                                style={{
-                                                                    resizeMode:
-                                                                        "cover"
-                                                                }}
-                                                                className="w-full h-full rounded-full"
-                                                                source={
-                                                                    hd.image
-                                                                }
-                                                            />
-                                                        </TouchableWithoutFeedback>
-                                                    </View>
-                                                ) : null}
-                                                <View className="flex-1 items-center flex-row">
-                                                    {m.documents.includes(
-                                                        "image"
-                                                    ) ? (
-                                                        <ImageMsg
-                                                            CusIcon={CusIcon}
-                                                            documents={
-                                                                m.documents
-                                                            }
-                                                            message={m.message}
-                                                        />
-                                                    ) : m.documents.includes(
-                                                          "audio"
-                                                      ) ? (
-                                                        <AudioMsg
-                                                            documents={
-                                                                m.documents
-                                                            }
-                                                            CusIcon={CusIcon}
-                                                            message={m.message}
-                                                        />
-                                                    ) : m.documents.includes(
-                                                          "video"
-                                                      ) ? (
-                                                        <VideoMsg
-                                                            documents={
-                                                                m.documents
-                                                            }
-                                                            CusIcon={CusIcon}
-                                                            message={m.message}
-                                                        />
-                                                    ) : m.documents.includes(
-                                                          "doc"
-                                                      ) ? (
-                                                        <DocMsg
-                                                            documents={
-                                                                m.documents
-                                                            }
-                                                            CusIcon={CusIcon}
-                                                            processText={
-                                                                processText
-                                                            }
-                                                            message={m.message}
-                                                        />
-                                                    ) : m.documents.includes(
-                                                          "contact"
-                                                      ) ? (
-                                                        <ContactMsg
-                                                            documents={
-                                                                m.documents
-                                                            }
-                                                            CusIcon={CusIcon}
-                                                            handleDialPress={
-                                                                handleDialPress
-                                                            }
-                                                            processText={
-                                                                processText
-                                                            }
-                                                            handleContact={
-                                                                handleContact
-                                                            }
-                                                            message={m.message}
-                                                        />
-                                                    ) : (
-                                                        <NormalMsg
-                                                            CusIcon={CusIcon}
-                                                            message={m.message}
-                                                        />
-                                                    )}
-                                                </View>
-                                            </View>
-                                        </View>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                            ) : null
-                        }
+                <Separator />
+                <View className="flex-1">{content}</View>
+                <View>
+                    <Messanger
+                        adding={adding}
+                        sendMessage={sendMessage}
+                        setReplyId={setReplyId}
+                        processText={processText}
+                        handleReplyMessage={handleReplyMessage}
+                        senderId={currentUser._id}
+                        receiverId={receiverId}
+                        replyId={replyId}
+                        message={message}
+                        setMessage={setMessage}
                     />
                 </View>
-                <Messanger
-                    setReplyId={setReplyId}
-                    processText={processText}
-                    handleReplyMessage={handleReplyMessage}
-                    senderId={currentUser._id}
-                    receiverId={hd._id}
-                    replyId={replyId}
-                />
             </View>
         </SafeAreaView>
     );

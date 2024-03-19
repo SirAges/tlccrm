@@ -107,8 +107,8 @@ const MembersList = ({ from, membersModal, setMembersModal, cUser, minId }) => {
         from === "ministry"
             ? useDeleteMinBlockMutation()
             : useDeleteDeptBlockMutation();
-    const inAdmins = allAdmins.find(a => idx === a);
-    const inBlocks = allBlocks.find(b => b === idx);
+    const inAdmins = allAdmins?.find(a => idx === a);
+    const inBlocks = allBlocks?.find(b => b === idx);
     useEffect(() => {
         try {
             setLoading(true);
@@ -422,7 +422,7 @@ const MembersList = ({ from, membersModal, setMembersModal, cUser, minId }) => {
             </View>
             {dropdown && idx && (
                 <ButtomMenu
-                title="group members"
+                    title="group members"
                     options={options}
                     setPopup={setDropdown}
                     idx={idx}

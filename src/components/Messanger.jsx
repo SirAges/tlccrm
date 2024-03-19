@@ -6,75 +6,77 @@ import {
     BackHandler,
     TouchableWithoutFeedback,
     Image,
-    FlatList
+    FlatList,
+    Alert
 } from "react-native";
-import { useState, useEffect, useRef } from "react";
-import { pickDocument } from "../lib/utils";
-import { CusIcon, FilePicker, ImageViewer } from "./";
+import { useState, useEffect, useContext, useRef } from "react";
+import { pickDocument, deleteImageByUrl } from "../lib/utils";
+import { GlobalContext } from "../hooks/GlobalContext";
+import { CusIcon, FilePicker, FormsImageView, ImageViewer } from "./";
 const Messanger = ({
     processText,
     senderId,
     receiverId,
     replyId,
     handleReplyMessage,
-    setReplyId
+    setReplyId,
+    sendMessage,
+    message,
+    setMessage,
+
+    adding
 }) => {
-    const [message, setMessage] = useState("");
+    const {
+        handleInputChange,
+        value,
+        setValue,
+        file,
+        setFile,
+        formsImageViewModal,
+        setFormsImageViewModal,
+        imageViewModal,
+        setImageViewModal,
+        setImageIndex,
+        setViewImages,
+        viewImages,
+        imageIndex
+    } = useContext(GlobalContext);
     const [iconIndex, setIconIndex] = useState(0);
-    const [documents, setDocuments] = useState([]);
+    useEffect(() => {
+        setValue({ documents: [] });
+    }, []);
 
     const [msgMenu, setMsgMenu] = useState(false);
-    const [imageViewModal, setImageViewModal] = useState(false);
 
     const flatListRef = useRef();
 
-    const handleImageIcon = async i => {
-        setIconIndex(i);
-
-      
-           
-            setImageViewModal(true);
-        
-    };
-
-    const pickFile = async clicked => {
+    const handlePickDocument = async () => {
+        const multiple = true;
+        const type = ["image/png", "image/jpg", "image/jpeg"];
         try {
-            if (clicked === "image") {
-                const res = await pickDocument(
-                    ["image/png", "image/jpg", "image/jpeg"],
-                    true
-                );
-                const images = res.assets;
-                setDocuments(prev => [...prev, ...images]);
-                console.log(documents);
+            const { assets } = await pickDocument(type, multiple);
+            if (assets?.length) {
+                setFile(prev => [...prev, ...assets]);
                 setMsgMenu(false);
-
-                setImageViewModal(true);
+                setFormsImageViewModal(true);
             } else {
             }
         } catch (err) {
-            console.log(err);
+            console.log("error", err);
+        } finally {
         }
     };
-    const removeFile = async uri => {
-        const newFile = documents.filter((f, i) => f.uri !== uri);
-        setDocuments(newFile);
+    const removeImage = async index => {
+        const newimages = value["documents"].filter((f, i) => i !== index);
 
-        // Delete the image by public ID
+        setValue(prev => ({ ...prev, documents: newimages }));
     };
-    const sendMessage = () => {
-        const messageObject = {
-            senderId,
-            receiverId,
-            message,
-            documents,
-            replyId
-        };
+    const handleImageIcon = async (m, i) => {
+        setViewImages(value["documents"]);
 
-        console.log(messageObject);
-        setMessage("");
+        setImageIndex(i);
+        setImageViewModal(true);
     };
-
     useEffect(() => {
         const backAction = () => {
             if (msgMenu) {
@@ -93,7 +95,7 @@ const Messanger = ({
     }, [msgMenu]);
     return (
         <View className="py-2 px-2 space-y-2">
-            {replyId.length ? (
+            {replyId ? (
                 <View className="flex-row items-center space-x-2 px-2 rounded-full">
                     <Text className="text-white capitalize">
                         replying {handleReplyMessage(replyId)[0]}
@@ -109,16 +111,15 @@ const Messanger = ({
                 </View>
             ) : null}
 
-            {documents.length ? (
+            {value?.documents?.length && (
                 <View>
                     <FlatList
-                        className="px-2"
-                        keyExtractor={d => d.uri}
-                        data={documents}
+                        keyExtractor={d => d}
+                        data={value?.documents}
                         horizontal
                         renderItem={({ item: d, index }) => (
                             <TouchableWithoutFeedback
-                                onPress={() => handleImageIcon(index)}
+                                onPress={() => handleImageIcon(d, index)}
                             >
                                 <View
                                     className=" h-14 w-14 justify-center
@@ -137,20 +138,20 @@ const Messanger = ({
                                             m={0}
                                             color="text-danger"
                                             name="close"
-                                            action={() => removeFile(d.uri)}
+                                            action={() => removeImage(index)}
                                         />
                                     </View>
                                     <Image
                                         className="w-full h-full rounded-md"
                                         style={{ resizeMode: "cover" }}
-                                        source={{ uri: d.uri }}
+                                        source={{ uri: d }}
                                     />
                                 </View>
                             </TouchableWithoutFeedback>
                         )}
                     />
                 </View>
-            ) : null}
+            )}
 
             <View
                 className="flex-row items-center rounded-full border
@@ -159,6 +160,7 @@ const Messanger = ({
                 <TextInput
                     className="flex-1 px-4 py-2 text-white"
                     value={message}
+                    placeholderTextColor="white"
                     onChangeText={text => setMessage(text)}
                     inputMode={"text"}
                     placeholder="message here"
@@ -171,7 +173,10 @@ const Messanger = ({
                     />
                 </View>
                 <View className="bg-white  rounded-r-full py-2 px-2">
-                    <CusIcon name="send" action={() => sendMessage()} />
+                    <CusIcon
+                        name={adding ? "ellipsis-horizontal" : "send"}
+                        action={adding ? null : () => sendMessage(receiverId)}
+                    />
                 </View>
             </View>
 
@@ -199,7 +204,7 @@ const Messanger = ({
                                     <CusIcon
                                         color="text-white"
                                         name="image"
-                                        action={() => pickFile("image")}
+                                        action={() => handlePickDocument()}
                                     />
                                 </View>
 
@@ -250,13 +255,14 @@ const Messanger = ({
                 </TouchableWithoutFeedback>
             </Modal>
             <ImageViewer
-                iconIndex={iconIndex}
-                flatListRef={flatListRef}
                 imageViewModal={imageViewModal}
                 setImageViewModal={setImageViewModal}
-                documents={documents}
+                images={viewImages}
+                imageIndex={imageIndex}
             />
+            <FormsImageView id={"documents"} />
         </View>
     );
 };
+
 export default Messanger;

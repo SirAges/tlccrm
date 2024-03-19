@@ -213,7 +213,7 @@ const SMinistryScreen = ({ navigation, route }) => {
         />
     );
 
-    if (isError || error?.data)
+      if ((!loading && !allFeeds.length) || isError || error?.data)
         content = (
             <ScreenLoader refresh={refresh} text="no content try again..." />
         );
